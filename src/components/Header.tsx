@@ -13,7 +13,8 @@ const AppHeader = styled.header`
 const StyledButton = styled.button`
   margin: 0 10px; // Add this line
 `;
-
+const HeaderStyle = styled.div`
+fontsize: 100px;`
 function Header() {
   return (
     <AppHeader>
