@@ -1,18 +1,21 @@
-import React from "react";
+import * as React from 'react'
+
+// 1. import `ChakraProvider` component
+import { ChakraProvider } from '@chakra-ui/react'
+import { Input } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+} from '@chakra-ui/react'
+import Form from '../components/Form'
 
 function Register() {
+  // 2. Wrap ChakraProvider at the root of your app
   return (
-    <div className="register-page">
-      <h1>メンバー登録ページ</h1>
-      <form>
-        <label>
-          名前:
-          <input type="text" name="name" />
-        </label>
-        <input type="submit" value="登録" />
-      </form>
-    </div>
-  );
+   <Form />
+  )
 }
 
 export default Register;
