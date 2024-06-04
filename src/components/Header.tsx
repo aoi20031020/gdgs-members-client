@@ -10,7 +10,7 @@ const AppHeader = styled.header`
   flex-direction: row; // Change this line
   text-align:center;
   justify-content: flex-end;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(10px + 1vmin);
   background-color: gray;
   color:#ffffff;
 `;

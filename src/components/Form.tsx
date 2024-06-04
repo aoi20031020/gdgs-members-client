@@ -7,6 +7,8 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
+import styles from "./style.module.css";
+
 function Form() {
   const [studentNumber, setStudentNumber] = useState('');
   const [name, setName] = useState('');
