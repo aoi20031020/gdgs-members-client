@@ -4,14 +4,21 @@ import styled from "styled-components";
 
 const AppHeader = styled.header`
   display: flex;
+  height: 80px;
+  line-height:80px;
+  padding-right: 20px;
   flex-direction: row; // Change this line
-  align-items: center;
-  justify-content: center;
+  text-align:center;
+  justify-content: flex-end;
   font-size: calc(10px + 2vmin);
+  background-color: gray;
+  color:#ffffff;
 `;
 
 const StyledButton = styled.button`
   margin: 0 10px; // Add this line
+  padding-left:25px;
+  padding-right:25px;
 `;
 
 function Header() {
@@ -21,13 +28,14 @@ function Header() {
         <StyledButton>Home</StyledButton>
       </Link>
       <Link to="/register">
-        <StyledButton>登録</StyledButton>
+        <StyledButton>Register</StyledButton>
       </Link>
       <Link to="/members">
-        <StyledButton>一覧</StyledButton>
+        <StyledButton>Members</StyledButton>
       </Link>
     </AppHeader>
+
   );
-}
+};
 
 export default Header;
