@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styled from "styled-components";
 import {
   Input,
   Select,
@@ -7,7 +8,10 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-import styles from "./style.module.css";
+const register-page = styled.form`
+  max-width:960px;
+text-align: center;
+`;
 
 function Form() {
   const [studentNumber, setStudentNumber] = useState('');
