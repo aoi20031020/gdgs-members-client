@@ -1,7 +1,3 @@
-import React from "react";
-
-
-
 function Members() {
   return (
     <div className="members-page">
