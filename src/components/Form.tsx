@@ -12,16 +12,23 @@ const Title =styled.h1`
   text-align:center;
   font-size: 2em;
   font-weight:bold;
+  padding: 70px;
 `;
 
 const Wrapper = styled.div`
-  max-width: 750px;
+  max-width: 600px;
   margin-left:auto ;
-    margin-right: auto;
+  margin-right: auto;
 `;
 
 const Box =styled.div`
   background:lightgray;
+`;
+
+const Buttoncss = styled.button`
+  text-align:center;
+  width:50px;
+  margin-top: 40px;
 `;
 
 function Form() {
@@ -67,29 +74,30 @@ function Form() {
         <FormControl>
           <FormLabel>氏名</FormLabel>
           <Box>
-            <div>
               <Input
                 placeholder="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-            </div>
           </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>全学メールアドレス</FormLabel>
+          <Box>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>学年</FormLabel>
+          <Box>
           <Select
-            placeholder="学年を選択してください"
+            placeholder=" "
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
           >
@@ -98,12 +106,14 @@ function Form() {
             <option value="3年">3年</option>
             <option value="4年">4年</option>
           </Select>
+          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>所属部門</FormLabel>
+          <Box>
           <Select
-            placeholder="部門を選択してください"
+            placeholder=" "
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
           >
@@ -111,11 +121,15 @@ function Form() {
             <option value="Marketing部門">Marketing部門</option>
             <option value="Event部門">Event部門</option>
           </Select>
+          </Box>
         </FormControl>
 
-        <Button colorScheme="teal" type="submit">
-          登録
-        </Button>
+      <Buttoncss>
+          <Button colorScheme='teal' type="submit">
+            完了
+          </Button>
+      </Buttoncss>
+
       </form>
     </div>
     </Wrapper>

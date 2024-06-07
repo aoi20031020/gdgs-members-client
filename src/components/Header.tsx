@@ -21,6 +21,11 @@ const AppHeader = styled.header`
     font-weight:bold;
   }
 
+  .titlename{
+    margin-right: 10px;
+    margin-left : 10px;
+  }
+
 `;
 
 const StyledButton = styled.button`
@@ -33,8 +38,8 @@ function Header() {
   return (
     <AppHeader>
       <div className="title">
-        <img src="public/images/logo.png" alt="logo" />
-        <h1>GDSC メンバー管理サイト</h1>
+        <img src="../public/images/logo.png" alt="logo" className="titlename"/>
+        <h1 className="titlename">GDSC メンバー管理サイト</h1>
       </div>
       <Link to="/">
         <StyledButton>Home</StyledButton>
