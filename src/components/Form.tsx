@@ -8,9 +8,20 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-const register-page = styled.form`
-  max-width:960px;
-text-align: center;
+const Title =styled.h1`
+  text-align:center;
+  font-size: 2em;
+  font-weight:bold;
+`;
+
+const Wrapper = styled.div`
+  max-width: 750px;
+  margin-left:auto ;
+    margin-right: auto;
+`;
+
+const Box =styled.div`
+  background:lightgray;
 `;
 
 function Form() {
@@ -33,25 +44,37 @@ function Form() {
   };
 
   return (
+
+    <Wrapper>
     <div className="register-page">
-      <h1>メンバー登録ページ</h1>
-      <form onSubmit={handleSubmit}>
+        <Title>
+          <h1>メンバーを登録する</h1>
+        </Title>
+          <form onSubmit={handleSubmit} >
         <FormControl>
           <FormLabel>学籍番号</FormLabel>
-          <Input
-            placeholder="student number"
-            value={studentNumber}
-            onChange={(e) => setStudentNumber(e.target.value)}
-          />
+          <Box>
+            <div>
+            <Input
+              placeholder="student number"
+              value={studentNumber}
+              onChange={(e) => setStudentNumber(e.target.value)}
+            />
+            </div>
+          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>氏名</FormLabel>
-          <Input
-            placeholder="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <Box>
+            <div>
+              <Input
+                placeholder="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </Box>
         </FormControl>
 
         <FormControl>
@@ -95,6 +118,7 @@ function Form() {
         </Button>
       </form>
     </div>
+    </Wrapper>
   );
 }
 

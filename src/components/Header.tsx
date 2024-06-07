@@ -13,6 +13,14 @@ const AppHeader = styled.header`
   font-size: calc(10px + 1vmin);
   background-color: gray;
   color:#ffffff;
+
+  .title{
+    display:flex;
+    margin-right:auto;
+    font-size: 1.5em;
+    font-weight:bold;
+  }
+
 `;
 
 const StyledButton = styled.button`
@@ -24,6 +32,10 @@ const StyledButton = styled.button`
 function Header() {
   return (
     <AppHeader>
+      <div className="title">
+        <img src="public/images/logo.png" alt="logo" />
+        <h1>GDSC メンバー管理サイト</h1>
+      </div>
       <Link to="/">
         <StyledButton>Home</StyledButton>
       </Link>
