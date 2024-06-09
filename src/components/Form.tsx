@@ -27,8 +27,9 @@ const Box =styled.div`
 
 const Buttoncss = styled.button`
   text-align:center;
-  width:50px;
-  margin-top: 40px;
+  background-color:blue;
+  width:100px;
+  margin-top:40px;
 `;
 
 function Form() {

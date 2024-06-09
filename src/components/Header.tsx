@@ -17,13 +17,17 @@ const AppHeader = styled.header`
   .title{
     display:flex;
     margin-right:auto;
-    font-size: 1.5em;
-    font-weight:bold;
   }
 
-  .titlename{
-    margin-right: 10px;
+  .title img{
+    height: 50px;
+    width: auto;
+  }
+
+  .title h1{
     margin-left : 10px;
+    font-size: 1.5em;
+    font-weight:bold;
   }
 
 `;
@@ -38,8 +42,8 @@ function Header() {
   return (
     <AppHeader>
       <div className="title">
-        <img src="../public/images/logo.png" alt="logo" className="titlename"/>
-        <h1 className="titlename">GDSC メンバー管理サイト</h1>
+        <img src="/images/logo.png" alt="logo" className="titlename"/>
+        <h1 >GDSC メンバー管理サイト</h1>
       </div>
       <Link to="/">
         <StyledButton>Home</StyledButton>
