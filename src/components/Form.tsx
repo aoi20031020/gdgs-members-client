@@ -53,22 +53,27 @@ function Form() {
         </Title>
           <form onSubmit={handleSubmit} >
         <FormControl>
-          <FormLabel>学籍番号</FormLabel>
+
+        <FormLabel>学籍番号</FormLabel>
             <Input
-              placeholder="student number"
-              value={studentNumber}
+              type="text"
+              pattern="^[a-zA-Z0-9]+$"
+              maxLength={11}
+              minLength={11}
               onChange={(e) => setStudentNumber(e.target.value)}
-              background='#cccccc'
+              background='#dbdbdb'
+              required
+              value={studentNumber}
             />
         </FormControl>
 
         <FormControl>
           <FormLabel>氏名</FormLabel>
               <Input
-                placeholder="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                background='#cccccc'
+                required
+                background='#dbdbdb'
               />
         </FormControl>
 
@@ -78,18 +83,20 @@ function Form() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            background='#cccccc'
+            required
+            background='#dbdbdb'
           />
         </FormControl>
 
         <FormControl>
           <FormLabel>学年</FormLabel>
           <Select
-            placeholder=" "
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
-            background='#cccccc'
+            background='#dbdbdb'
+            required
           >
+            <option disabled selected></option>
             <option value="1年">1年</option>
             <option value="2年">2年</option>
             <option value="3年">3年</option>
@@ -100,11 +107,12 @@ function Form() {
         <FormControl>
           <FormLabel>所属部門</FormLabel>
           <Select
-            placeholder=" "
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            background='#cccccc'
+            background='#dbdbdb'
+            required
           >
+            <option disabled selected></option>
             <option value="Technology部門">Technology部門</option>
             <option value="Marketing部門">Marketing部門</option>
             <option value="Event部門">Event部門</option>
@@ -119,6 +127,7 @@ function Form() {
             width='180px'
             type="submit"
             margin='50px'
+            fontWeight='bold'
             >
             完了
           </Button>
