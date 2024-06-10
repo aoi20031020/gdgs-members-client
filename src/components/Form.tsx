@@ -12,7 +12,7 @@ const Title =styled.h1`
   text-align:center;
   font-size: 2em;
   font-weight:bold;
-  padding: 70px;
+  padding: 70px 0px 40px 0px;
 `;
 
 const Wrapper = styled.div`
@@ -21,16 +21,9 @@ const Wrapper = styled.div`
   margin-right: auto;
 `;
 
-const Box =styled.div`
-  background:lightgray;
-`;
-
-const Buttoncss = styled.button`
-  text-align:center;
-  background-color:blue;
-  width:100px;
-  margin-top:40px;
-`;
+const Buttoncenter=styled.div`
+text-align:center;
+`
 
 function Form() {
   const [studentNumber, setStudentNumber] = useState('');
@@ -61,75 +54,76 @@ function Form() {
           <form onSubmit={handleSubmit} >
         <FormControl>
           <FormLabel>学籍番号</FormLabel>
-          <Box>
-            <div>
             <Input
               placeholder="student number"
               value={studentNumber}
               onChange={(e) => setStudentNumber(e.target.value)}
+              background='#cccccc'
             />
-            </div>
-          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>氏名</FormLabel>
-          <Box>
               <Input
                 placeholder="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                background='#cccccc'
               />
-          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>全学メールアドレス</FormLabel>
-          <Box>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            background='#cccccc'
           />
-          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>学年</FormLabel>
-          <Box>
           <Select
             placeholder=" "
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
+            background='#cccccc'
           >
             <option value="1年">1年</option>
             <option value="2年">2年</option>
             <option value="3年">3年</option>
             <option value="4年">4年</option>
           </Select>
-          </Box>
         </FormControl>
 
         <FormControl>
           <FormLabel>所属部門</FormLabel>
-          <Box>
           <Select
             placeholder=" "
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
+            background='#cccccc'
           >
             <option value="Technology部門">Technology部門</option>
             <option value="Marketing部門">Marketing部門</option>
             <option value="Event部門">Event部門</option>
           </Select>
-          </Box>
         </FormControl>
 
-      <Buttoncss>
-          <Button colorScheme='teal' type="submit">
+        <Buttoncenter>
+          <div>
+          <Button
+            background='#b3afaf'
+            color='#ffffff'
+            width='180px'
+            type="submit"
+            margin='50px'
+            >
             完了
           </Button>
-      </Buttoncss>
+          </div>
+        </Buttoncenter>
 
       </form>
     </div>
