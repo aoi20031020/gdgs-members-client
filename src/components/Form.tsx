@@ -28,15 +28,17 @@ const Buttoncenter = styled.div`
 
 // Errorオブジェクトの型を定義
 type Errors = {
-  studentNumber?: string;
-  name?: string;
-  email?: string;
-  grade?: string;
-  department?: string;
+ studentNumber?: string;
+ name?: string;
+ email?: string;
+ grade?: string;
+ department?: string;
 };
+
 
 // Formコンポーネントを作成
 function Form() {
+
   const [studentNumber, setStudentNumber] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
