@@ -69,7 +69,6 @@ heights: 100px;`
 const Astyle = styled.div`
 display: inline-flex;`
 
-
 function Home() {
   return (
     <div>
