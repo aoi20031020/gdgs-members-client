@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import {
   Input,
   Select,
@@ -15,6 +16,23 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from '@chakra-ui/react';
+
+const Title = styled.h1`
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  padding: 30px 0px 30px 0px;
+`;
+
+const Wrapper = styled.div`
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Buttoncenter = styled.div`
+  text-align: center;
+`;
 
 // Errorオブジェクトの型を定義
 type Errors = {
@@ -93,7 +111,6 @@ function Form() {
         errorsCopy.department = '';
       }
     }
-
     setErrors(errorsCopy);
     return isValid;
   };
@@ -160,7 +177,6 @@ function Form() {
           />
           <FormErrorMessage>{errors.studentNumber}</FormErrorMessage>
         </FormControl>
-
         <FormControl isInvalid={!!errors.name} isRequired>
           <FormLabel>氏名</FormLabel>
           <Input
@@ -173,7 +189,6 @@ function Form() {
           />
           <FormErrorMessage>{errors.name}</FormErrorMessage>
         </FormControl>
-
         <FormControl isInvalid={!!errors.email} isRequired>
           <FormLabel>全学メールアドレス</FormLabel>
           <Input
@@ -187,7 +202,6 @@ function Form() {
           />
           <FormErrorMessage>{errors.email}</FormErrorMessage>
         </FormControl>
-
         <FormControl isInvalid={!!errors.grade} isRequired>
           <FormLabel>学年</FormLabel>
           <Select
@@ -205,7 +219,6 @@ function Form() {
           </Select>
           <FormErrorMessage>{errors.grade}</FormErrorMessage>
         </FormControl>
-
         <FormControl isInvalid={!!errors.department}>
           <FormLabel>所属部門</FormLabel>
           <Stack spacing={2}>
@@ -221,7 +234,6 @@ function Form() {
           </Stack>
           <FormErrorMessage>{errors.department}</FormErrorMessage>
         </FormControl>
-
         <Button
           type="submit"
           disabled={isButtonDisabled}
@@ -234,7 +246,6 @@ function Form() {
           登録
         </Button>
       </form>
-
       <AlertDialog
         isOpen={isAlertOpen}
         leastDestructiveRef={cancelRef}
@@ -245,12 +256,10 @@ function Form() {
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               確認
             </AlertDialogHeader>
-
             <AlertDialogBody>
               {`学籍番号: ${studentNumber}\n氏名: ${name}\n全学メールアドレス: ${email}\n学年: ${grade}\n所属部門: ${departments.join(', ')}`}
               この内容で本当に送信して良いですか？
             </AlertDialogBody>
-
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
                 キャンセル
@@ -262,7 +271,6 @@ function Form() {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-    </div>
   );
 }
 
