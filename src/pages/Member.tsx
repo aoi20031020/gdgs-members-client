@@ -15,9 +15,32 @@ import {
     AlertDialogHeader,
     AlertDialogContent,
     AlertDialogOverlay,
-    useDisclosure
+    useDisclosure,
+    Divider
 } from "@chakra-ui/react";
 import students from "./testdata";
+import styled from "styled-components";
+
+const StyledMembers = styled.div`
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+`;
+
+const StyledTable = styled.td`
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+`;
+const StyledTableHeader = styled.th`
+    color: #64748b;
+    padding: 20px;
+    fontfamily: 'manrope';
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+`;
 
 interface Student {
     name: string;
@@ -60,66 +83,76 @@ function Members() {
 
      return (
         <>
-            <TableContainer>
-                <Table variant="striped" colorScheme="teal">
-                    <TableCaption>連想配列の表示</TableCaption>
-                    <Thead>
-                        <Tr>
-                            <Th>No</Th>
-                            <Th>学籍番号</Th>
-                            <Th>Name</Th>
-                            <Th>Email</Th>
-                            <Th>Grade</Th>
-                            <Th>Technology</Th>
-                            <Th>Marketing</Th>
-                            <Th>Event</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {Object.keys(data).map((key, index) => (
-                            <Tr key={index} onClick={() => handleRowClick(data[key])} style={{ cursor: 'pointer' }}>
-                                <Td>{index + 1}</Td>
-                                <Td>{key}</Td>
-                                <Td>{data[key].name}</Td>
-                                <Td>{data[key].email}</Td>
-                                <Td>{data[key].grade}</Td>
-                                <Td>{data[key].technology}</Td>
-                                <Td>{data[key].marketing}</Td>
-                                <Td>{data[key].event}</Td>
-                            </Tr>
-                        ))}
-                    </Tbody>
-                </Table>
-            </TableContainer>
+            <StyledMembers>
+                <StyledTable>
+                    <TableContainer>
+                        <Table colorScheme="gray">
+                            <TableCaption>連想配列の表示</TableCaption>
+                            <Thead>
+                                <Tr>
+                                    <StyledTableHeader>No</StyledTableHeader>
+                                    <StyledTableHeader>学籍番号</StyledTableHeader>
+                                    <StyledTableHeader>氏名</StyledTableHeader>
+                                    <StyledTableHeader>全学メール</StyledTableHeader>
+                                    <StyledTableHeader>学年</StyledTableHeader>
+                                    <StyledTableHeader>Technology</StyledTableHeader>
+                                    <StyledTableHeader>Marketing</StyledTableHeader>
+                                    <StyledTableHeader>Event</StyledTableHeader>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {Object.keys(data).map((key, index) => (
+                                    <>
+                                        <Tr key={index} onClick={() => handleRowClick(data[key])} style={{ cursor: 'pointer' }}>
+                                            <StyledTable>{index + 1}</StyledTable>
+                                            <StyledTable>{key}</StyledTable>
+                                            <StyledTable>{data[key].name}</StyledTable>
+                                            <StyledTable>{data[key].email}</StyledTable>
+                                            <StyledTable>{data[key].grade}</StyledTable>
+                                            <StyledTable>{data[key].technology}</StyledTable>
+                                            <StyledTable>{data[key].marketing}</StyledTable>
+                                            <StyledTable>{data[key].event}</StyledTable>
+                                        </Tr>
+                                        {/* <Divider 
+                                            borderWidth= {5}
+                                            height= {4}
+                                        /> */}
+                                    </>
+                                ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
+                </StyledTable>
 
-            {selectedStudent && (
-                <AlertDialog
-                    isOpen={isOpen}
-                    leastDestructiveRef={cancelRef}
-                    onClose={onClose}
-                >
-                    <AlertDialogOverlay>
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                学生情報
-                            </AlertDialogHeader>
-                            <AlertDialogBody>
-                                <p><strong>Name:</strong> {selectedStudent.name}</p>
-                                <p><strong>Email:</strong> {selectedStudent.email}</p>
-                                <p><strong>Grade:</strong> {selectedStudent.grade}</p>
-                                <p><strong>Technology:</strong> {selectedStudent.technology}</p>
-                                <p><strong>Marketing:</strong> {selectedStudent.marketing}</p>
-                                <p><strong>Event:</strong> {selectedStudent.event}</p>
-                            </AlertDialogBody>
-                            <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={onClose}>
-                                    Close
-                                </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog>
-            )}
+                {selectedStudent && (
+                    <AlertDialog
+                        isOpen={isOpen}
+                        leastDestructiveRef={cancelRef}
+                        onClose={onClose}
+                    >
+                        <AlertDialogOverlay>
+                            <AlertDialogContent>
+                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                    学生情報
+                                </AlertDialogHeader>
+                                <AlertDialogBody>
+                                    <p><strong>Name:</strong> {selectedStudent.name}</p>
+                                    <p><strong>Email:</strong> {selectedStudent.email}</p>
+                                    <p><strong>Grade:</strong> {selectedStudent.grade}</p>
+                                    <p><strong>Technology:</strong> {selectedStudent.technology}</p>
+                                    <p><strong>Marketing:</strong> {selectedStudent.marketing}</p>
+                                    <p><strong>Event:</strong> {selectedStudent.event}</p>
+                                </AlertDialogBody>
+                                <AlertDialogFooter>
+                                    <Button ref={cancelRef} onClick={onClose}>
+                                        Close
+                                    </Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialogOverlay>
+                    </AlertDialog>
+                )}
+            </StyledMembers>
         </>
     );
 }
