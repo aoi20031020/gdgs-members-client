@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
 } from '@chakra-ui/react';
+import arrow from "./img/Arrow.png"
 
 const Title =styled.h1`
   text-align:center;
@@ -23,7 +24,8 @@ const Wrapper = styled.div`
 
 const Buttoncenter=styled.div`
 text-align:center;
-`
+`;
+
 
 function Form() {
   const [studentNumber, setStudentNumber] = useState('');
@@ -95,6 +97,7 @@ function Form() {
             onChange={(e) => setGrade(e.target.value)}
             background='#dbdbdb'
             required
+            icon={<img src={arrow} />} 
           >
             <option disabled selected></option>
             <option value="1年">1年</option>
@@ -111,6 +114,7 @@ function Form() {
             onChange={(e) => setDepartment(e.target.value)}
             background='#dbdbdb'
             required
+            icon={<img src={arrow} />} 
           >
             <option disabled selected></option>
             <option value="Technology部門">Technology部門</option>
