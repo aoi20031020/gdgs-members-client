@@ -13,7 +13,7 @@ const Title = styled.h1`
   text-align: center;
   font-size: 2em;
   font-weight: bold;
-  padding: 70px 0px 40px 0px;
+  padding: 30px 0px 30px 0px;
 `;
 
 const Wrapper = styled.div`
@@ -28,17 +28,15 @@ const Buttoncenter = styled.div`
 
 // Errorオブジェクトの型を定義
 type Errors = {
- studentNumber?: string;
- name?: string;
- email?: string;
- grade?: string;
- department?: string;
+  studentNumber?: string;
+  name?: string;
+  email?: string;
+  grade?: string;
+  department?: string;
 };
-
 
 // Formコンポーネントを作成
 function Form() {
-
   const [studentNumber, setStudentNumber] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
