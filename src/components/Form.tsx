@@ -58,10 +58,6 @@ function Form() {
 
         <FormLabel>学籍番号</FormLabel>
             <Input
-              type="text"
-              pattern="^[a-zA-Z0-9]+$"
-              maxLength={11}
-              minLength={11}
               onChange={(e) => setStudentNumber(e.target.value)}
               background='#dbdbdb'
               required
@@ -82,7 +78,6 @@ function Form() {
         <FormControl>
           <FormLabel>全学メールアドレス</FormLabel>
           <Input
-            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
