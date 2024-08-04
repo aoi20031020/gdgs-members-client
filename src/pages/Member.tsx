@@ -14,10 +14,10 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
+  Spinner,
 } from "@chakra-ui/react";
-import students from "./testdata";
 import styled from "styled-components";
-import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
+import { useMemberService, Member } from "../services/memberService";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -52,142 +52,161 @@ const StyledTableHeaderTeam = styled(StyledTableHeader)`
   width: 120px;
 `;
 
-interface Student {
-  name: string;
-  email: string;
-  grade: string;
-  technology: string;
-  marketing: string;
-  event: string;
-}
-
 function Members() {
-  const [members, setMembers] = useState([]);
-  const authFetch = useAuthenticatedFetch();
-  const [data, setData] = useState<{ [key: string]: Student }>({});
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { getMembers, deleteMember } = useMemberService();
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<any>();
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await authFetch("/members");
-        if (response.ok) {
-          const data = await response.json();
-          setMembers(data);
-        } else {
-          console.error("Failed to fetch members:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching members:", error);
-      }
-    };
-
     fetchMembers();
-  }, [authFetch]);
-
-  useEffect(() => {
-    setData(students);
   }, []);
 
-  const handleRowClick = (student: Student) => {
-    setSelectedStudent(student);
+  const fetchMembers = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getMembers();
+      setMembers(data);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+      setError("Failed to fetch members. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRowClick = (member: Member) => {
+    setSelectedMember(member);
     onOpen();
   };
 
-  return (
-    <>
-      <StyledMembers>
-        <StyledTable>
-          <TableContainer>
-            <Table colorScheme="gray">
-              <TableCaption>連想配列の表示</TableCaption>
-              <Thead>
-                <Tr>
-                  <StyledTableHeader>No</StyledTableHeader>
-                  <StyledTableHeader>学籍番号</StyledTableHeader>
-                  <StyledTableHeader>氏名</StyledTableHeader>
-                  <StyledTableHeader>全学メール</StyledTableHeader>
-                  <StyledTableHeader>学年</StyledTableHeader>
-                  <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
-                  <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
-                  <StyledTableHeaderTeam>Event</StyledTableHeaderTeam>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {Object.keys(data).map((key, index) => (
-                  <Tr
-                    key={index}
-                    onClick={() => handleRowClick(data[key])}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <StyledTableCell>{index + 1}</StyledTableCell>
-                    <StyledTableCell>{key}</StyledTableCell>
-                    <StyledTableCell>{data[key].name}</StyledTableCell>
-                    <StyledTableCell>{data[key].email}</StyledTableCell>
-                    <StyledTableCell>{data[key].grade}</StyledTableCell>
-                    <StyledTableTeam>
-                      {data[key].technology === "1" ? "○" : "×"}
-                    </StyledTableTeam>
-                    <StyledTableTeam>
-                      {data[key].marketing === "1" ? "○" : "×"}
-                    </StyledTableTeam>
-                    <StyledTableTeam>
-                      {data[key].event === "1" ? "○" : "×"}
-                    </StyledTableTeam>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </StyledTable>
+  const handleDeleteMember = async (id: string) => {
+    try {
+      await deleteMember(id);
+      fetchMembers(); // Refresh the member list
+    } catch (error) {
+      console.error("Error deleting member:", error);
+      setError("Failed to delete member. Please try again.");
+    }
+  };
 
-        {selectedStudent && (
-          <AlertDialog
-            isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onClose}
-          >
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  学生情報
-                </AlertDialogHeader>
-                <AlertDialogBody>
-                  <p>
-                    <strong>Name:</strong> {selectedStudent.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {selectedStudent.email}
-                  </p>
-                  <p>
-                    <strong>Grade:</strong> {selectedStudent.grade}
-                  </p>
-                  <p>
-                    <strong>Technology:</strong>{" "}
-                    {selectedStudent.technology === "1" ? "○" : "×"}
-                  </p>
-                  <p>
-                    <strong>Marketing:</strong>{" "}
-                    {selectedStudent.marketing === "1" ? "○" : "×"}
-                  </p>
-                  <p>
-                    <strong>Event:</strong>{" "}
-                    {selectedStudent.event === "1" ? "○" : "×"}
-                  </p>
-                </AlertDialogBody>
-                <AlertDialogFooter>
-                  <Button ref={cancelRef} onClick={onClose}>
-                    Close
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
-        )}
+  if (isLoading) {
+    return (
+      <StyledMembers>
+        <Spinner />
+        <p>Loading members...</p>
       </StyledMembers>
-    </>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledMembers>
+        <p>{error}</p>
+      </StyledMembers>
+    );
+  }
+
+  return (
+    <StyledMembers>
+      <StyledTable>
+        <TableContainer>
+          <Table colorScheme="gray">
+            <TableCaption>メンバー一覧</TableCaption>
+            <Thead>
+              <Tr>
+                <StyledTableHeader>No</StyledTableHeader>
+                <StyledTableHeader>学籍番号</StyledTableHeader>
+                <StyledTableHeader>氏名</StyledTableHeader>
+                <StyledTableHeader>全学メール</StyledTableHeader>
+                <StyledTableHeader>学年</StyledTableHeader>
+                <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
+                <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
+                <StyledTableHeaderTeam>Event</StyledTableHeaderTeam>
+                <StyledTableHeader>操作</StyledTableHeader>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {members.map((member, index) => (
+                <Tr key={member.id}>
+                  <StyledTableCell>{index + 1}</StyledTableCell>
+                  <StyledTableCell>{member.student_id}</StyledTableCell>
+                  <StyledTableCell>{member.name}</StyledTableCell>
+                  <StyledTableCell>{member.email}</StyledTableCell>
+                  <StyledTableCell>{member.year}</StyledTableCell>
+                  <StyledTableTeam>
+                    {member.team_technology ? "○" : "×"}
+                  </StyledTableTeam>
+                  <StyledTableTeam>
+                    {member.team_marketing ? "○" : "×"}
+                  </StyledTableTeam>
+                  <StyledTableTeam>
+                    {member.team_event ? "○" : "×"}
+                  </StyledTableTeam>
+                  <StyledTableCell>
+                    <Button onClick={() => handleRowClick(member)}>詳細</Button>
+                    <Button onClick={() => handleDeleteMember(member.id)}>
+                      削除
+                    </Button>
+                  </StyledTableCell>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </StyledTable>
+
+      {selectedMember && (
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                学生情報
+              </AlertDialogHeader>
+              <AlertDialogBody>
+                <p>
+                  <strong>学籍番号:</strong> {selectedMember.student_id}
+                </p>
+                <p>
+                  <strong>氏名:</strong> {selectedMember.name}
+                </p>
+                <p>
+                  <strong>メール:</strong> {selectedMember.email}
+                </p>
+                <p>
+                  <strong>学年:</strong> {selectedMember.year}
+                </p>
+                <p>
+                  <strong>Technology:</strong>{" "}
+                  {selectedMember.team_technology ? "○" : "×"}
+                </p>
+                <p>
+                  <strong>Marketing:</strong>{" "}
+                  {selectedMember.team_marketing ? "○" : "×"}
+                </p>
+                <p>
+                  <strong>Event:</strong>{" "}
+                  {selectedMember.team_event ? "○" : "×"}
+                </p>
+              </AlertDialogBody>
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Close
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      )}
+    </StyledMembers>
   );
 }
 
