@@ -1,7 +1,8 @@
 import React from "react";
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../AuthContext";
 const BodyStyle = styled.div`
   display: inline-block;
   clip-path: polygon(0 0px, 760px 0, 500px 1000px, 0 100%);
@@ -80,6 +81,16 @@ const HomeBox = styled.div`
 `;
 
 function Home() {
+  const { isAuthenticated, login } = useAuthContext();
+  const navigate = useNavigate();
+  const handleMembersClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isAuthenticated) {
+      navigate("/members");
+    } else {
+      login();
+    }
+  };
   return (
     <HomeBox>
       <BodyStyle>
@@ -105,17 +116,15 @@ function Home() {
         <br />
         スト
       </TextStyle>
-      <Link to="/members">
-        <Astyle>
-          <Icon2>
-            <img
-              src={`${process.env.PUBLIC_URL}/images/three.png`}
-              alt="three"
-            ></img>
-          </Icon2>
-          <Icon2Style>メンバー一覧</Icon2Style>
-        </Astyle>
-      </Link>
+      <Astyle onClick={handleMembersClick}>
+        <Icon2>
+          <img
+            src={`${process.env.PUBLIC_URL}/images/three.png`}
+            alt="three"
+          ></img>
+        </Icon2>
+        <Icon2Style>メンバー一覧</Icon2Style>
+      </Astyle>
     </HomeBox>
   );
 }

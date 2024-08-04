@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import students from "./testdata";
 import styled from "styled-components";
+import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -61,10 +62,30 @@ interface Student {
 }
 
 function Members() {
+  const [members, setMembers] = useState([]);
+  const authFetch = useAuthenticatedFetch();
   const [data, setData] = useState<{ [key: string]: Student }>({});
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<any>();
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await authFetch("/members");
+        if (response.ok) {
+          const data = await response.json();
+          setMembers(data);
+        } else {
+          console.error("Failed to fetch members:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+
+    fetchMembers();
+  }, [authFetch]);
 
   useEffect(() => {
     setData(students);
