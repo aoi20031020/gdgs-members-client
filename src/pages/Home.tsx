@@ -91,7 +91,7 @@ function Home() {
         <Astyle>
           <Icon1>
             <img
-              src="https://s3-alpha-sig.figma.com/img/90e2/9c9d/5e9868c346f6b006ae4aefdd010a801f?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=HqwZzyxvR8y-JHJMYeO4u2fLT0bjqXoC3bvGWvxjAY0QgwXiouekaWyD4e~hpQ-JdlQctE1G5GXSyXvnU0MTrgtXBLMnjpe9QDnDFeQz1iscl5ScIY0DomuV9pQgOR7DDgztw3EHITMiHf6MrMDDinVB-nwR3h27IKT~w~DKexllPZ5KF6ySxSFTNQ~r46M~1PJXwDUJk2K-uySlIPSDiXH1QcD8RMTA0JsjwBxNTbNkqLyye0ZWCRdLnrkvm47EH3xblmpaT9vFlmez52LvIo8d~p9kjgUkOU1VUwgP2~mijYBWDExBV8l~EOOuL05o5Dsr2K0S-evqhJBtha5cQg__"
+              src={`${process.env.PUBLIC_URL}/images/one.png`}
               alt="one"
             ></img>
           </Icon1>
@@ -109,7 +109,7 @@ function Home() {
         <Astyle>
           <Icon2>
             <img
-              src="https://s3-alpha-sig.figma.com/img/d929/eca2/13c09fbfa4cf31835a81a543059784a2?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Z50CrsYyMR5kvC2BG48-vDtKU5TQFdgqNwWMzXkrqw2iYsSc-0MahrzxRfuOFr4S-HdhiO8Vq8juBgrE2k4JvDn51iM8ZLqzxWu67jbyyAD~55x4U38ke2CHoG2qE7Ia9yXbOduUevIVYpIcFb51c57B8FE0fCtk5ZiStMVr-oftyaqVcfyBfj2Ax5Xggt0a-y9puOuyo2z0xvIjWYDpanMAPfWUgzAS4xYreeczc-Nm-IGAqtv0JTBzAaU0yvgwDK3t7W6GYxQAZTXdtqQzQ4KiTmCXPT4~87woUTzqRwRhaR-FQZRymy~sU4cW5aXIomQLMPiSA41gddsOL0Votw__"
+              src={`${process.env.PUBLIC_URL}/images/three.png`}
               alt="three"
             ></img>
           </Icon2>
