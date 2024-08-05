@@ -30,7 +30,8 @@ export function useAuth() {
     async (loginId: string) => {
       const codeVerifier = localStorage.getItem("code_verifier");
       if (!codeVerifier) {
-        throw new Error("Code verifier not found");
+        console.error("Code verifier not found");
+        return;
       }
 
       try {
@@ -47,9 +48,12 @@ export function useAuth() {
         });
 
         if (!response.ok) {
-          throw new Error(
-            "Failed to exchange authorization code for session token"
+          const errorText = await response.text();
+          console.error(
+            "Failed to exchange authorization code for session token:",
+            errorText
           );
+          return;
         }
 
         const result = await response.json();
