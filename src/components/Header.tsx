@@ -1,6 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useAuthContext } from "../AuthContext";
 
 const AppHeader = styled.header`
   display: flex;
@@ -36,6 +37,16 @@ const Picture = styled.picture`
 `;
 
 function Header() {
+  const { isAuthenticated, login } = useAuthContext();
+  const navigate = useNavigate();
+  const handleMembersClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isAuthenticated) {
+      navigate("/members");
+    } else {
+      login();
+    }
+  };
   return (
     <AppHeader>
       <Picture>
@@ -48,9 +59,7 @@ function Header() {
       <Link to="/register">
         <StyledButton>Regester</StyledButton>
       </Link>
-      <Link to="/members">
-        <StyledButton>Members</StyledButton>
-      </Link>
+      <StyledButton onClick={handleMembersClick}>Members</StyledButton>
     </AppHeader>
   );
 }
