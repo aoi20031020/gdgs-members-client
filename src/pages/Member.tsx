@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { useMemberService, Member } from "../services/memberService";
+import SelectedMemberAlertDialog from "../components/SelectedMemberAlertDialog";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -161,50 +162,12 @@ function Members() {
       </StyledTable>
 
       {selectedMember && (
-        <AlertDialog
+        <SelectedMemberAlertDialog
           isOpen={isOpen}
           leastDestructiveRef={cancelRef}
           onClose={onClose}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                学生情報
-              </AlertDialogHeader>
-              <AlertDialogBody>
-                <p>
-                  <strong>学籍番号:</strong> {selectedMember.student_id}
-                </p>
-                <p>
-                  <strong>氏名:</strong> {selectedMember.name}
-                </p>
-                <p>
-                  <strong>メール:</strong> {selectedMember.email}
-                </p>
-                <p>
-                  <strong>学年:</strong> {selectedMember.year}
-                </p>
-                <p>
-                  <strong>Technology:</strong>{" "}
-                  {selectedMember.team_technology ? "○" : "×"}
-                </p>
-                <p>
-                  <strong>Marketing:</strong>{" "}
-                  {selectedMember.team_marketing ? "○" : "×"}
-                </p>
-                <p>
-                  <strong>Event:</strong>{" "}
-                  {selectedMember.team_event ? "○" : "×"}
-                </p>
-              </AlertDialogBody>
-              <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onClose}>
-                  Close
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
+          selectedMember={selectedMember}
+        />
       )}
     </StyledMembers>
   );
