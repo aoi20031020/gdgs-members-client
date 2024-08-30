@@ -27,17 +27,19 @@ export interface NewMember {
 
 export function useMembers() {
   const { sessionToken } = useAuth();
+  const { checkSessionToken } = useAuth();
 
   const getMembers = useCallback(async () => {
-    console.log("Session token in useMembers:", sessionToken); // デバッグログ
-    if (!sessionToken) {
+    const token = checkSessionToken();
+    console.log("Session token in useMembers:", token); // デバッグログ
+    if (!token) {
       throw new Error("No session token available. Please log in.");
     }
 
     try {
       const response = await fetch(`${API_BASE_URL}/members`, {
         headers: {
-          Authorization: `Session ${sessionToken}`,
+          Authorization: `Session ${token}`,
         },
       });
       if (!response.ok) {
@@ -48,7 +50,7 @@ export function useMembers() {
       console.error("Error fetching members:", error);
       throw error;
     }
-  }, [sessionToken]);
+  }, [checkSessionToken]);
 
   const getMemberById = useCallback(
     async (id: string): Promise<Member> => {

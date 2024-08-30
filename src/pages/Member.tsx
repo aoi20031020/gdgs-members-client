@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Table,
   Thead,
@@ -19,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { useMembers, Member } from "../hooks/useMembers";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -60,24 +62,70 @@ function Members() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isAuthenticated, checkSessionToken } = useAuth();
+  const navigate = useNavigate();
+
+  const fetchMembersData = useCallback(async () => {
+    try {
+      const data = await getMembers();
+      setMembers(data);
+      setError(null);
+    } catch (error: unknown) {
+      let errorMessage: string;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error("Error fetching members:", errorMessage);
+        if (errorMessage.includes("No session token available")) {
+          navigate("/login");
+        }
+      } else {
+        errorMessage = "An unknown error occurred while fetching members";
+        console.error("Unknown error fetching members:", error);
+      }
+      setError(errorMessage);
+    }
+  }, [getMembers, navigate]);
 
   useEffect(() => {
-    fetchMembersData();
-  }, []);
-
-  const fetchMembersData = async () => {
-    try {
-      setIsLoading(true);
-      const fetchedMembers = await getMembers();
-      setMembers(fetchedMembers);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching members:", error);
-      setError("Failed to fetch members. Please try again later.");
-    } finally {
-      setIsLoading(false);
+    const token = checkSessionToken();
+    console.log(
+      "Authentication state:",
+      isAuthenticated,
+      "Session token:",
+      token
+    ); // デバッグログ
+    if (!isAuthenticated || !token) {
+      console.log("Not authenticated, redirecting to login");
+      navigate("/login");
+      return;
     }
-  };
+
+    const fetchMembers = async () => {
+      try {
+        const data = await getMembers();
+        setMembers(data);
+      } catch (error: unknown) {
+        let errorMessage: string;
+        if (error instanceof Error) {
+          errorMessage = error.message;
+          console.error("Error fetching members:", errorMessage);
+          if (errorMessage.includes("No session token available")) {
+            navigate("/login");
+          }
+        } else {
+          errorMessage = "An unknown error occurred while fetching members";
+          console.error("Unknown error fetching members:", error);
+        }
+        setError(errorMessage);
+      }
+    };
+
+    fetchMembers();
+  }, [getMembers, isAuthenticated, checkSessionToken, navigate]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const handleRowClick = async (memberId: string) => {
     try {
