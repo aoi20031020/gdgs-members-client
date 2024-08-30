@@ -1,43 +1,26 @@
 import { useCallback } from "react";
-import { useAuth } from "./useAuth";
-import { API_BASE_URL } from "../config";
+import { useAuth } from "./useAuth"; // パスは実際の場所に合わせて調整してください
 
 export function useAuthenticatedFetch() {
-  const { sessionToken, logout } = useAuth();
+  const { checkSessionToken } = useAuth();
 
-  const authFetch = useCallback(
-    async (path: string, options: RequestInit = {}) => {
-      if (!sessionToken) {
-        throw new Error("No session token available");
-      }
-
-      const headers = new Headers(options.headers);
-      headers.set("Authorization", `Session ${sessionToken}`);
-
-      const response = await fetch(`${API_BASE_URL}${path}`, {
+  return useCallback(
+    async (url: string, options: RequestInit = {}) => {
+      const token = checkSessionToken();
+      const response = await fetch(url, {
         ...options,
-        headers,
+        headers: {
+          ...options.headers,
+          Authorization: `Session ${token}`,
+        },
       });
 
-      if (response.status === 401) {
-        // Session expired or invalid
-        await logout();
-        throw new Error("Session expired");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const expiresAt = response.headers.get("X-Session-Expires-At");
-      if (expiresAt) {
-        // You might want to handle session expiration here
-        console.log(
-          "Session expires at:",
-          new Date(parseInt(expiresAt, 10) * 1000)
-        );
-      }
-
-      return response;
+      return response.json();
     },
-    [sessionToken, logout]
+    [checkSessionToken]
   );
-
-  return authFetch;
 }

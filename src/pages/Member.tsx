@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Thead,
@@ -9,10 +9,16 @@ import {
   Button,
   useDisclosure,
   Spinner,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import styled from "styled-components";
-import { useMemberService, Member } from "../services/memberService";
-import SelectedMemberAlertDialog from "../components/SelectedMemberAlertDialog";
+import { useMembers, Member } from "../hooks/useMembers";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -48,23 +54,22 @@ const StyledTableHeaderTeam = styled(StyledTableHeader)`
 `;
 
 function Members() {
+  const { getMembers, getMemberById, deleteMember } = useMembers();
   const [members, setMembers] = useState<Member[]>([]);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { getMembers, deleteMember } = useMemberService();
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<any>();
 
   useEffect(() => {
-    fetchMembers();
+    fetchMembersData();
   }, []);
 
-  const fetchMembers = async () => {
+  const fetchMembersData = async () => {
     try {
       setIsLoading(true);
-      const data = await getMembers();
-      setMembers(data);
+      const fetchedMembers = await getMembers();
+      setMembers(fetchedMembers);
       setError(null);
     } catch (error) {
       console.error("Error fetching members:", error);
@@ -74,15 +79,24 @@ function Members() {
     }
   };
 
-  const handleRowClick = (member: Member) => {
-    setSelectedMember(member);
-    onOpen();
+  const handleRowClick = async (memberId: string) => {
+    try {
+      setIsLoading(true);
+      const memberData = await getMemberById(memberId);
+      setSelectedMember(memberData);
+      onOpen();
+    } catch (error) {
+      console.error("Error fetching member details:", error);
+      setError("Failed to fetch member details. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteMember = async (id: string) => {
     try {
       await deleteMember(id);
-      fetchMembers(); // Refresh the member list
+      await fetchMembersData(); // Refresh the member list
     } catch (error) {
       console.error("Error deleting member:", error);
       setError("Failed to delete member. Please try again.");
@@ -143,7 +157,9 @@ function Members() {
                     {member.team_event ? "○" : "×"}
                   </StyledTableTeam>
                   <StyledTableCell>
-                    <Button onClick={() => handleRowClick(member)}>詳細</Button>
+                    <Button onClick={() => handleRowClick(member.id)}>
+                      詳細
+                    </Button>
                     <Button onClick={() => handleDeleteMember(member.id)}>
                       削除
                     </Button>
@@ -155,14 +171,33 @@ function Members() {
         </TableContainer>
       </StyledTable>
 
-      {selectedMember && (
-        <SelectedMemberAlertDialog
-          isOpen={isOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={onClose}
-          selectedMember={selectedMember}
-        />
-      )}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>メンバー詳細</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedMember && (
+              <>
+                <p>学籍番号: {selectedMember.student_id}</p>
+                <p>氏名: {selectedMember.name}</p>
+                <p>メール: {selectedMember.email}</p>
+                <p>学年: {selectedMember.year}</p>
+                <p>
+                  Technology: {selectedMember.team_technology ? "Yes" : "No"}
+                </p>
+                <p>Marketing: {selectedMember.team_marketing ? "Yes" : "No"}</p>
+                <p>Event: {selectedMember.team_event ? "Yes" : "No"}</p>
+              </>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              閉じる
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </StyledMembers>
   );
 }

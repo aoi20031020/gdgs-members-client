@@ -8,11 +8,31 @@ export function useAuth() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("session");
-    if (storedToken) {
-      setSessionToken(storedToken);
-      setIsAuthenticated(true);
-    }
+    const checkAndRefreshToken = async () => {
+      const storedToken = localStorage.getItem("session");
+      if (storedToken) {
+        try {
+          // トークンの有効性を確認するAPIエンドポイントを呼び出す
+          const response = await fetch(`${API_BASE_URL}/validate-token`, {
+            headers: {
+              Authorization: `Session ${storedToken}`,
+            },
+          });
+          if (response.ok) {
+            setSessionToken(storedToken);
+            setIsAuthenticated(true);
+          } else {
+            // トークンが無効な場合、ログアウト処理を行う
+            await logout();
+          }
+        } catch (error) {
+          console.error("Error validating token:", error);
+          await logout();
+        }
+      }
+    };
+
+    checkAndRefreshToken();
   }, []);
 
   const login = useCallback(async () => {
@@ -31,8 +51,7 @@ export function useAuth() {
     async (loginId: string) => {
       const codeVerifier = localStorage.getItem("code_verifier");
       if (!codeVerifier) {
-        console.error("Code verifier not found");
-        return;
+        throw new Error("Code verifier not found");
       }
       console.log("handleCallback");
       try {
@@ -50,11 +69,9 @@ export function useAuth() {
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(
-            "Failed to exchange authorization code for session token:",
-            errorText
+          throw new Error(
+            `Failed to exchange authorization code for session token: ${errorText}`
           );
-          return;
         }
 
         const result = await response.json();
@@ -62,12 +79,11 @@ export function useAuth() {
         localStorage.setItem("session", newSessionToken);
         setSessionToken(newSessionToken);
         setIsAuthenticated(true);
-        console.log("ok!!");
+        console.log("Authentication successful");
         navigate("/members");
       } catch (error) {
         console.error("Login failed:", error);
-        throw error; // エラーを再スローして、呼び出し元で処理できるようにする
-        // navigate("/");
+        throw error;
       }
     },
     [navigate]
@@ -93,12 +109,21 @@ export function useAuth() {
     navigate("/");
   }, [sessionToken, navigate]);
 
+  const checkSessionToken = useCallback(() => {
+    const token = localStorage.getItem("session");
+    if (!token) {
+      throw new Error("No session token available. Please log in.");
+    }
+    return token;
+  }, []);
+
   return {
     isAuthenticated,
     sessionToken,
     login,
     handleCallback,
     logout,
+    checkSessionToken,
   };
 }
 
