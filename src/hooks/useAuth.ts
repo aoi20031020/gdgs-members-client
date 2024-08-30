@@ -6,14 +6,33 @@ export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const navigate = useNavigate();
+  const logout = useCallback(async () => {
+    if (sessionToken) {
+      try {
+        await fetch(`${API_BASE_URL}/session`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Session ${sessionToken}`,
+          },
+        });
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    }
+    localStorage.removeItem("session");
+    localStorage.removeItem("code_verifier");
+    setSessionToken(null);
+    setIsAuthenticated(false);
+    navigate("/");
+  }, [sessionToken, navigate]);
 
   useEffect(() => {
     const checkAndRefreshToken = async () => {
       const storedToken = localStorage.getItem("session");
       if (storedToken) {
         try {
-          // トークンの有効性を確認するAPIエンドポイントを呼び出す
-          const response = await fetch(`${API_BASE_URL}/validate-token`, {
+          // /members エンドポイントを使用してトークンの有効性を確認
+          const response = await fetch(`${API_BASE_URL}/members`, {
             headers: {
               Authorization: `Session ${storedToken}`,
             },
@@ -22,7 +41,7 @@ export function useAuth() {
             setSessionToken(storedToken);
             setIsAuthenticated(true);
           } else {
-            // トークンが無効な場合、ログアウト処理を行う
+            console.error("Invalid token, logging out");
             await logout();
           }
         } catch (error) {
@@ -33,7 +52,7 @@ export function useAuth() {
     };
 
     checkAndRefreshToken();
-  }, []);
+  }, [logout]);
 
   const login = useCallback(async () => {
     console.log("Login function called"); // デバッグログ
@@ -88,26 +107,6 @@ export function useAuth() {
     },
     [navigate]
   );
-
-  const logout = useCallback(async () => {
-    if (sessionToken) {
-      try {
-        await fetch(`${API_BASE_URL}/session`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Session ${sessionToken}`,
-          },
-        });
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
-    }
-    localStorage.removeItem("session");
-    localStorage.removeItem("code_verifier");
-    setSessionToken(null);
-    setIsAuthenticated(false);
-    navigate("/");
-  }, [sessionToken, navigate]);
 
   const checkSessionToken = useCallback(() => {
     const token = localStorage.getItem("session");
