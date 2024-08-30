@@ -26,23 +26,25 @@ export interface NewMember {
 }
 
 export function useMembers() {
-  const { isAuthenticated, sessionToken } = useAuth();
-  const navigate = useNavigate();
+  const { sessionToken } = useAuth();
 
-  useEffect(() => {
-    if (!isAuthenticated || !sessionToken) {
-      navigate("/login");
+  const getMembers = useCallback(async () => {
+    if (!sessionToken) {
+      throw new Error("No session token available. Please log in.");
     }
-  }, [isAuthenticated, sessionToken, navigate]);
 
-  const getMembers = useCallback(async (): Promise<Member[]> => {
     try {
       const response = await fetch(`${API_BASE_URL}/members`, {
         headers: {
-          Authorization: `Bearer ${sessionToken}`,
+          Authorization: `Session ${sessionToken}`,
         },
       });
-      if (!response.ok) throw new Error("Failed to fetch members");
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized: Invalid or expired session token");
+        }
+        throw new Error(`Failed to fetch members: ${response.statusText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error("Error fetching members:", error);

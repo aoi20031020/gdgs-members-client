@@ -29,33 +29,19 @@ export function useAuth() {
   useEffect(() => {
     const checkAndRefreshToken = async () => {
       const storedToken = localStorage.getItem("session");
+      console.log("Stored token:", storedToken); // デバッグログ
       if (storedToken) {
-        try {
-          // /members エンドポイントを使用してトークンの有効性を確認
-          const response = await fetch(`${API_BASE_URL}/members`, {
-            headers: {
-              Authorization: `Session ${storedToken}`,
-            },
-          });
-          if (response.ok) {
-            setSessionToken(storedToken);
-            setIsAuthenticated(true);
-          } else {
-            console.error("Invalid token, logging out");
-            await logout();
-          }
-        } catch (error) {
-          console.error("Error validating token:", error);
-          await logout();
-        }
+        setSessionToken(storedToken);
+        setIsAuthenticated(true);
+      } else {
+        console.log("No stored token found"); // デバッグログ
       }
     };
 
     checkAndRefreshToken();
-  }, [logout]);
+  }, []);
 
   const login = useCallback(async () => {
-    console.log("Login function called"); // デバッグログ
     const codeVerifier = generateCodeVerifier();
     localStorage.setItem("code_verifier", codeVerifier);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -72,7 +58,6 @@ export function useAuth() {
       if (!codeVerifier) {
         throw new Error("Code verifier not found");
       }
-      console.log("handleCallback");
       try {
         const response = await fetch(`${API_BASE_URL}/session`, {
           method: "POST",
@@ -95,6 +80,7 @@ export function useAuth() {
 
         const result = await response.json();
         const newSessionToken = result.session;
+        console.log("New session token received:", newSessionToken); // デバッグログ
         localStorage.setItem("session", newSessionToken);
         setSessionToken(newSessionToken);
         setIsAuthenticated(true);
