@@ -87,8 +87,10 @@ function Home() {
     e.preventDefault();
     if (isAuthenticated) {
       navigate("/members");
+      console.log("ok");
     } else {
       login();
+      console.log("No...");
     }
   };
   return (
@@ -98,7 +100,7 @@ function Home() {
         <br />
         membership
       </BodyStyle>
-      <Link to="/register">
+      <Link to="register">
         <Astyle>
           <Icon1>
             <img

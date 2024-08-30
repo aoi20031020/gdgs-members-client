@@ -16,12 +16,13 @@ export function useAuth() {
   }, []);
 
   const login = useCallback(async () => {
+    console.log("Login function called"); // デバッグログ
     const codeVerifier = generateCodeVerifier();
     localStorage.setItem("code_verifier", codeVerifier);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
-
     const url = new URL(`${API_BASE_URL}/login`);
     url.searchParams.set("code_challenge", codeChallenge);
+    console.log("Redirecting to:", url.toString()); // デバッグログ
 
     window.location.href = url.toString();
   }, []);
@@ -33,7 +34,7 @@ export function useAuth() {
         console.error("Code verifier not found");
         return;
       }
-
+      console.log("handleCallback");
       try {
         const response = await fetch(`${API_BASE_URL}/session`, {
           method: "POST",
@@ -61,10 +62,12 @@ export function useAuth() {
         localStorage.setItem("session", newSessionToken);
         setSessionToken(newSessionToken);
         setIsAuthenticated(true);
+        console.log("ok!!");
         navigate("/members");
       } catch (error) {
         console.error("Login failed:", error);
-        navigate("/");
+        throw error; // エラーを再スローして、呼び出し元で処理できるようにする
+        // navigate("/");
       }
     },
     [navigate]

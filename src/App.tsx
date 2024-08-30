@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Register from "./pages/Register";
 import Members from "./pages/Member";
 import Home from "./pages/Home";
@@ -22,7 +22,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/members" element={<Members />} />
-            <Route path="/callback" element={<CallbackHandler />} />
+            <Route path="/login/callback" element={<CallbackHandler />} />
           </Routes>
           <Footer />
         </div>
