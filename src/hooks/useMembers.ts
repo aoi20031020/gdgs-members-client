@@ -29,6 +29,7 @@ export function useMembers() {
   const { sessionToken } = useAuth();
 
   const getMembers = useCallback(async () => {
+    console.log("Session token in useMembers:", sessionToken); // デバッグログ
     if (!sessionToken) {
       throw new Error("No session token available. Please log in.");
     }
@@ -40,9 +41,6 @@ export function useMembers() {
         },
       });
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Unauthorized: Invalid or expired session token");
-        }
         throw new Error(`Failed to fetch members: ${response.statusText}`);
       }
       return await response.json();
