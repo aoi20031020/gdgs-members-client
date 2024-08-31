@@ -97,24 +97,21 @@ function Members() {
   }, [getMembers, handleError]);
 
   useEffect(() => {
-    const checkAuthAndFetchMembers = async () => {
-      const token = checkSessionToken();
-      console.log(
-        "Authentication state:",
-        isAuthenticated,
-        "Session token:",
-        token
-      );
-      if (!isAuthenticated || !token) {
-        console.log("Not authenticated, redirecting to login");
-        navigate("/login");
-        return;
-      }
-      await fetchMembersData();
-    };
+    const token = checkSessionToken();
+    console.log(
+      "Authentication state:",
+      isAuthenticated,
+      "Session token:",
+      token
+    );
+    if (!token) {
+      console.log("No token, redirecting to login");
+      navigate("/login");
+      return;
+    }
 
-    checkAuthAndFetchMembers();
-  }, [isAuthenticated, checkSessionToken, navigate, fetchMembersData]);
+    fetchMembersData();
+  }, [checkSessionToken, isAuthenticated, navigate, fetchMembersData]);
 
   const handleRowClick = async (memberId: string) => {
     try {
