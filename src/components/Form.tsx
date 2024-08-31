@@ -61,8 +61,10 @@ function Form() {
     let errorsCopy: Errors = { ...errors };
 
     if (field === "studentNumber" || field === "all") {
-      const studentNumberPattern = /^[0-9A-Z]*$/;
-      if (value && !studentNumberPattern.test(value)) {
+      if (!value) {
+        errorsCopy.studentNumber = "学籍番号は必須です。";
+        isValid = false;
+      } else if (!/^[0-9A-Z]*$/.test(value)) {
         errorsCopy.studentNumber =
           "学籍番号は半角数字および大文字アルファベットのみ使用できます。";
         isValid = false;
@@ -72,8 +74,10 @@ function Form() {
     }
 
     if (field === "name" || field === "all") {
-      const namePattern = /^[^\s\u3000]*$/;
-      if (value && !namePattern.test(value)) {
+      if (!value) {
+        errorsCopy.name = "氏名は必須です。";
+        isValid = false;
+      } else if (/[\s\u3000]/.test(value)) {
         errorsCopy.name =
           "氏名には半角および全角スペースを含めることはできません。";
         isValid = false;
@@ -83,8 +87,11 @@ function Form() {
     }
 
     if (field === "email" || field === "all") {
-      if (value && !/\S+@\S+\.\S+/.test(value)) {
-        errorsCopy.email = "全学メールアドレスを入力してください。";
+      if (!value) {
+        errorsCopy.email = "メールアドレスは必須です。";
+        isValid = false;
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        errorsCopy.email = "有効な全学メールアドレスを入力してください。";
         isValid = false;
       } else {
         errorsCopy.email = "";
@@ -92,7 +99,7 @@ function Form() {
     }
 
     if (field === "grade" || field === "all") {
-      if (value === "") {
+      if (!value) {
         errorsCopy.grade = "学年を選択してください。";
         isValid = false;
       } else {
@@ -102,7 +109,7 @@ function Form() {
 
     if (field === "department" || field === "all") {
       if (departments.length === 0) {
-        errorsCopy.department = "所属部門を選択してください。";
+        errorsCopy.department = "少なくとも1つの所属部門を選択してください。";
         isValid = false;
       } else {
         errorsCopy.department = "";
@@ -138,11 +145,13 @@ function Form() {
   const handleConfirm = async () => {
     setIsAlertOpen(false);
     const formData = {
-      studentNumber,
+      student_id: studentNumber,
       name,
       email,
-      grade,
-      department: departments,
+      year: parseInt(grade),
+      team_technology: departments.includes("Technology"),
+      team_marketing: departments.includes("Marketing"),
+      team_event: departments.includes("Event"),
     };
 
     try {
@@ -155,31 +164,26 @@ function Form() {
       });
 
       if (!response.ok) {
-        throw new Error("メンバー登録に失敗しました");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "メンバー登録に失敗しました");
       }
 
-      toast({
-        title: "メンバー登録成功",
-        description: "新しいメンバーが正常に登録されました。",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-
-      // フォームをリセット
+      const result = await response.json();
+      console.log("メンバーが正常に登録されました。ID:", result.id);
+      // フォームをリセットする処理を追加
       setStudentNumber("");
       setName("");
       setEmail("");
       setGrade("");
       setDepartments([]);
-    } catch (error) {
-      toast({
-        title: "エラー",
-        description: "メンバー登録中にエラーが発生しました。",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      // 成功メッセージを表示する処理を追加
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("エラー:", error.message);
+        // エラーメッセージを表示する処理を追加
+      } else {
+        console.error("不明なエラーが発生しました:", error);
+      }
     }
   };
 
