@@ -87,10 +87,11 @@ function Members() {
     try {
       setIsLoading(true);
       const data = await getMembers();
-      setMembers(data);
+      setMembers(data || []); // データがnullの場合は空配列を設定
       setError(null);
     } catch (error: unknown) {
       handleError(error, "Error fetching members:");
+      setMembers([]); // エラー時は空配列を設定
     } finally {
       setIsLoading(false);
     }
@@ -172,32 +173,40 @@ function Members() {
               </Tr>
             </Thead>
             <Tbody>
-              {members.map((member, index) => (
-                <Tr key={member.id}>
-                  <StyledTableCell>{index + 1}</StyledTableCell>
-                  <StyledTableCell>{member.student_id}</StyledTableCell>
-                  <StyledTableCell>{member.name}</StyledTableCell>
-                  <StyledTableCell>{member.email}</StyledTableCell>
-                  <StyledTableCell>{member.year}</StyledTableCell>
-                  <StyledTableTeam>
-                    {member.team_technology ? "○" : "×"}
-                  </StyledTableTeam>
-                  <StyledTableTeam>
-                    {member.team_marketing ? "○" : "×"}
-                  </StyledTableTeam>
-                  <StyledTableTeam>
-                    {member.team_event ? "○" : "×"}
-                  </StyledTableTeam>
-                  <StyledTableCell>
-                    <Button onClick={() => handleRowClick(member.id)}>
-                      詳細
-                    </Button>
-                    <Button onClick={() => handleDeleteMember(member.id)}>
-                      削除
-                    </Button>
+              {members.length > 0 ? (
+                members.map((member, index) => (
+                  <Tr key={member.id}>
+                    <StyledTableCell>{index + 1}</StyledTableCell>
+                    <StyledTableCell>{member.student_id}</StyledTableCell>
+                    <StyledTableCell>{member.name}</StyledTableCell>
+                    <StyledTableCell>{member.email}</StyledTableCell>
+                    <StyledTableCell>{member.year}</StyledTableCell>
+                    <StyledTableTeam>
+                      {member.team_technology ? "○" : "×"}
+                    </StyledTableTeam>
+                    <StyledTableTeam>
+                      {member.team_marketing ? "○" : "×"}
+                    </StyledTableTeam>
+                    <StyledTableTeam>
+                      {member.team_event ? "○" : "×"}
+                    </StyledTableTeam>
+                    <StyledTableCell>
+                      <Button onClick={() => handleRowClick(member.id)}>
+                        詳細
+                      </Button>
+                      <Button onClick={() => handleDeleteMember(member.id)}>
+                        削除
+                      </Button>
+                    </StyledTableCell>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <StyledTableCell colSpan={9}>
+                    No members found
                   </StyledTableCell>
                 </Tr>
-              ))}
+              )}
             </Tbody>
           </Table>
         </TableContainer>

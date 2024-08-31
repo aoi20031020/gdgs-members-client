@@ -1,8 +1,7 @@
 // hooks/useMembers.ts
-import { useState, useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAuth } from "./useAuth";
 import { API_BASE_URL } from "../config";
-import { useNavigate } from "react-router-dom";
 
 export interface Member {
   id: string;
@@ -26,12 +25,11 @@ export interface NewMember {
 }
 
 export function useMembers() {
-  const { sessionToken } = useAuth();
   const { checkSessionToken } = useAuth();
 
   const getMembers = useCallback(async () => {
     const token = checkSessionToken();
-    console.log("Session token in useMembers:", token); // デバッグログ
+    console.log("Session token in useMembers:", token);
     if (!token) {
       throw new Error("No session token available. Please log in.");
     }
@@ -45,7 +43,8 @@ export function useMembers() {
       if (!response.ok) {
         throw new Error(`Failed to fetch members: ${response.statusText}`);
       }
-      return await response.json();
+      const data = await response.json();
+      return data.members || []; // サーバーからの応答に 'members' プロパティがあると仮定
     } catch (error) {
       console.error("Error fetching members:", error);
       throw error;
@@ -57,7 +56,7 @@ export function useMembers() {
       try {
         const response = await fetch(`${API_BASE_URL}/members/${id}`, {
           headers: {
-            Authorization: `Bearer ${sessionToken}`,
+            Authorization: `Bearer ${checkSessionToken}`,
           },
         });
         if (!response.ok) throw new Error("Failed to fetch member");
@@ -67,7 +66,7 @@ export function useMembers() {
         throw error;
       }
     },
-    [sessionToken]
+    [checkSessionToken]
   );
 
   const addMember = useCallback(
@@ -77,7 +76,7 @@ export function useMembers() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionToken}`,
+            Authorization: `Bearer ${checkSessionToken}`,
           },
           body: JSON.stringify(newMember),
         });
@@ -88,7 +87,7 @@ export function useMembers() {
         throw error;
       }
     },
-    [sessionToken]
+    [checkSessionToken]
   );
 
   const deleteMember = useCallback(
@@ -97,7 +96,7 @@ export function useMembers() {
         const response = await fetch(`${API_BASE_URL}/members/${id}`, {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${sessionToken}`,
+            Authorization: `Bearer ${checkSessionToken}`,
           },
         });
         if (!response.ok) throw new Error("Failed to delete member");
@@ -106,7 +105,7 @@ export function useMembers() {
         throw error;
       }
     },
-    [sessionToken]
+    [checkSessionToken]
   );
 
   return { getMembers, getMemberById, addMember, deleteMember };
