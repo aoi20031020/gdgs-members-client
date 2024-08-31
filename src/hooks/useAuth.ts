@@ -14,12 +14,17 @@ export function useAuth() {
       setSessionToken(storedToken);
       setIsAuthenticated(true);
     }
-  }, []); // 空の依存配列
+  }, []);
 
   const checkSessionToken = useCallback(() => {
     const token = localStorage.getItem("session");
     console.log("Checking session token:", token); // デバッグログ
-    return token;
+    if (token) {
+      setIsAuthenticated(true);
+      return token;
+    }
+    setIsAuthenticated(false);
+    return null;
   }, []);
 
   const login = useCallback(async () => {
@@ -75,25 +80,12 @@ export function useAuth() {
     [navigate]
   );
 
-  const logout = useCallback(async () => {
-    if (sessionToken) {
-      try {
-        await fetch(`${API_BASE_URL}/session`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Session ${sessionToken}`,
-          },
-        });
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
-    }
+  const logout = useCallback(() => {
     localStorage.removeItem("session");
-    localStorage.removeItem("code_verifier");
     setSessionToken(null);
     setIsAuthenticated(false);
     navigate("/");
-  }, [sessionToken, navigate]);
+  }, [navigate]);
 
   return {
     isAuthenticated,

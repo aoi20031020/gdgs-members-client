@@ -65,26 +65,36 @@ function Members() {
   const { isAuthenticated, checkSessionToken } = useAuth();
   const navigate = useNavigate();
 
-  const fetchMembersData = useCallback(async () => {
-    try {
-      const data = await getMembers();
-      setMembers(data);
-      setError(null);
-    } catch (error: unknown) {
+  const handleError = useCallback(
+    (error: unknown, customMessage: string) => {
       let errorMessage: string;
       if (error instanceof Error) {
         errorMessage = error.message;
-        console.error("Error fetching members:", errorMessage);
+        console.error(customMessage, errorMessage);
         if (errorMessage.includes("No session token available")) {
           navigate("/login");
         }
       } else {
-        errorMessage = "An unknown error occurred while fetching members";
-        console.error("Unknown error fetching members:", error);
+        errorMessage = `An unknown error occurred: ${customMessage}`;
+        console.error(errorMessage, error);
       }
       setError(errorMessage);
+    },
+    [navigate]
+  );
+
+  const fetchMembersData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await getMembers();
+      setMembers(data);
+      setError(null);
+    } catch (error: unknown) {
+      handleError(error, "Error fetching members:");
+    } finally {
+      setIsLoading(false);
     }
-  }, [getMembers, navigate]);
+  }, [getMembers, handleError]);
 
   useEffect(() => {
     const token = checkSessionToken();
@@ -93,39 +103,15 @@ function Members() {
       isAuthenticated,
       "Session token:",
       token
-    ); // デバッグログ
+    );
     if (!isAuthenticated || !token) {
       console.log("Not authenticated, redirecting to login");
       navigate("/login");
       return;
     }
 
-    const fetchMembers = async () => {
-      try {
-        const data = await getMembers();
-        setMembers(data);
-      } catch (error: unknown) {
-        let errorMessage: string;
-        if (error instanceof Error) {
-          errorMessage = error.message;
-          console.error("Error fetching members:", errorMessage);
-          if (errorMessage.includes("No session token available")) {
-            navigate("/login");
-          }
-        } else {
-          errorMessage = "An unknown error occurred while fetching members";
-          console.error("Unknown error fetching members:", error);
-        }
-        setError(errorMessage);
-      }
-    };
-
-    fetchMembers();
-  }, [getMembers, isAuthenticated, checkSessionToken, navigate]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+    fetchMembersData();
+  }, [isAuthenticated, checkSessionToken, navigate, fetchMembersData]);
 
   const handleRowClick = async (memberId: string) => {
     try {
@@ -134,8 +120,7 @@ function Members() {
       setSelectedMember(memberData);
       onOpen();
     } catch (error) {
-      console.error("Error fetching member details:", error);
-      setError("Failed to fetch member details. Please try again.");
+      handleError(error, "Error fetching member details:");
     } finally {
       setIsLoading(false);
     }
@@ -146,8 +131,7 @@ function Members() {
       await deleteMember(id);
       await fetchMembersData(); // Refresh the member list
     } catch (error) {
-      console.error("Error deleting member:", error);
-      setError("Failed to delete member. Please try again.");
+      handleError(error, "Error deleting member:");
     }
   };
 
