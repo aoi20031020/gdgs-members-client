@@ -9,7 +9,7 @@ export function useAuth() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("session");
-    console.log("Stored token in useAuth:", storedToken); // デバッグログ
+    console.log("Stored token in useAuth:", storedToken);
     if (storedToken) {
       setSessionToken(storedToken);
       setIsAuthenticated(true);
@@ -18,8 +18,9 @@ export function useAuth() {
 
   const checkSessionToken = useCallback(() => {
     const token = localStorage.getItem("session");
-    console.log("Checking session token:", token); // デバッグログ
+    console.log("Checking session token:", token);
     if (token) {
+      setSessionToken(token);
       setIsAuthenticated(true);
       return token;
     }
@@ -28,13 +29,13 @@ export function useAuth() {
   }, []);
 
   const login = useCallback(async () => {
+    console.log("Login function called");
     const codeVerifier = generateCodeVerifier();
     localStorage.setItem("code_verifier", codeVerifier);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     const url = new URL(`${API_BASE_URL}/login`);
     url.searchParams.set("code_challenge", codeChallenge);
-    console.log("Redirecting to:", url.toString()); // デバッグログ
-
+    console.log("Redirecting to:", url.toString());
     window.location.href = url.toString();
   }, []);
 
@@ -44,6 +45,7 @@ export function useAuth() {
       if (!codeVerifier) {
         throw new Error("Code verifier not found");
       }
+      console.log("handleCallback");
       try {
         const response = await fetch(`${API_BASE_URL}/session`, {
           method: "POST",
@@ -66,7 +68,7 @@ export function useAuth() {
 
         const result = await response.json();
         const newSessionToken = result.session;
-        console.log("New session token received:", newSessionToken); // デバッグログ
+        console.log("New session token received:", newSessionToken);
         localStorage.setItem("session", newSessionToken);
         setSessionToken(newSessionToken);
         setIsAuthenticated(true);
@@ -80,12 +82,25 @@ export function useAuth() {
     [navigate]
   );
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    if (sessionToken) {
+      try {
+        await fetch(`${API_BASE_URL}/session`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Session ${sessionToken}`,
+          },
+        });
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    }
     localStorage.removeItem("session");
+    localStorage.removeItem("code_verifier");
     setSessionToken(null);
     setIsAuthenticated(false);
     navigate("/");
-  }, [navigate]);
+  }, [sessionToken, navigate]);
 
   return {
     isAuthenticated,
@@ -97,6 +112,7 @@ export function useAuth() {
   };
 }
 
+// ヘルパー関数
 function generateCodeVerifier(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
