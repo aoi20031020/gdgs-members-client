@@ -15,7 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useToast,
 } from "@chakra-ui/react";
+import { API_BASE_URL } from "../config";
 
 const Title = styled.h1`
   text-align: center;
@@ -34,7 +36,6 @@ const Buttoncenter = styled.div`
   text-align: center;
 `;
 
-// Errorオブジェクトの型を定義
 type Errors = {
   studentNumber?: string;
   name?: string;
@@ -43,7 +44,6 @@ type Errors = {
   department?: string;
 };
 
-// Formコンポーネントを作成
 function Form() {
   const [studentNumber, setStudentNumber] = useState("");
   const [name, setName] = useState("");
@@ -54,13 +54,12 @@ function Form() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const cancelRef = React.useRef(null);
+  const toast = useToast();
 
-  // フォームの入力値を検証する関数
   const validate = (field: string, value: string | null) => {
     let isValid = true;
     let errorsCopy: Errors = { ...errors };
 
-    // 学籍番号のバリデーション
     if (field === "studentNumber" || field === "all") {
       const studentNumberPattern = /^[0-9A-Z]*$/;
       if (value && !studentNumberPattern.test(value)) {
@@ -72,9 +71,8 @@ function Form() {
       }
     }
 
-    // 氏名のバリデーション
     if (field === "name" || field === "all") {
-      const namePattern = /^[^\s\u3000]*$/; // 半角および全角スペース禁止
+      const namePattern = /^[^\s\u3000]*$/;
       if (value && !namePattern.test(value)) {
         errorsCopy.name =
           "氏名には半角および全角スペースを含めることはできません。";
@@ -84,7 +82,6 @@ function Form() {
       }
     }
 
-    // メールアドレスのバリデーション
     if (field === "email" || field === "all") {
       if (value && !/\S+@\S+\.\S+/.test(value)) {
         errorsCopy.email = "全学メールアドレスを入力してください。";
@@ -94,7 +91,6 @@ function Form() {
       }
     }
 
-    // 学年のバリデーション
     if (field === "grade" || field === "all") {
       if (value === "") {
         errorsCopy.grade = "学年を選択してください。";
@@ -104,7 +100,6 @@ function Form() {
       }
     }
 
-    // 所属部門のバリデーション
     if (field === "department" || field === "all") {
       if (departments.length === 0) {
         errorsCopy.department = "所属部門を選択してください。";
@@ -113,6 +108,7 @@ function Form() {
         errorsCopy.department = "";
       }
     }
+
     setErrors(errorsCopy);
     return isValid;
   };
@@ -139,7 +135,7 @@ function Form() {
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setIsAlertOpen(false);
     const formData = {
       studentNumber,
@@ -148,8 +144,43 @@ function Form() {
       grade,
       department: departments,
     };
-    console.log(JSON.stringify(formData, null, 2));
-    // ここで送信処理を行う
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/members`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("メンバー登録に失敗しました");
+      }
+
+      toast({
+        title: "メンバー登録成功",
+        description: "新しいメンバーが正常に登録されました。",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // フォームをリセット
+      setStudentNumber("");
+      setName("");
+      setEmail("");
+      setGrade("");
+      setDepartments([]);
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "メンバー登録中にエラーが発生しました。",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,127 +196,119 @@ function Form() {
 
   return (
     <Wrapper>
-      <div className="register-page">
-        <Title>
-          <h1>メンバーを登録する</h1>
-        </Title>
-        <form onSubmit={handleSubmit}>
-          <FormControl isInvalid={!!errors.studentNumber} isRequired>
-            <FormLabel>学籍番号</FormLabel>
-            <Input
-              placeholder="学籍番号"
-              value={studentNumber}
-              onChange={(e) => {
-                setStudentNumber(e.target.value);
-                validate("studentNumber", e.target.value);
-              }}
-              background="#dbdbdb"
-            />
-            <FormErrorMessage>{errors.studentNumber}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.name} isRequired>
-            <FormLabel>氏名</FormLabel>
-            <Input
-              placeholder="氏名"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                validate("name", e.target.value);
-              }}
-              background="#dbdbdb"
-            />
-            <FormErrorMessage>{errors.name}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.email} isRequired>
-            <FormLabel>全学メールアドレス</FormLabel>
-            <Input
-              type="email"
-              placeholder="全学メールアドレス"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                validate("email", e.target.value);
-              }}
-              background="#dbdbdb"
-            />
-            <FormErrorMessage>{errors.email}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.grade} isRequired>
-            <FormLabel>学年</FormLabel>
-            <Select
-              placeholder="学年を選択してください"
-              value={grade}
-              onChange={(e) => {
-                setGrade(e.target.value);
-                validate("grade", e.target.value);
-              }}
-              background="#dbdbdb"
-            >
-              <option value="1年">1年</option>
-              <option value="2年">2年</option>
-              <option value="3年">3年</option>
-              <option value="4年">4年</option>
-            </Select>
-            <FormErrorMessage>{errors.grade}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.department}>
-            <FormLabel>所属部門</FormLabel>
-            <Stack spacing={2} background="#dbdbdb">
-              <Checkbox value="Technology部門" onChange={handleCheckboxChange}>
-                Technology部門
-              </Checkbox>
-              <Checkbox value="Marketing部門" onChange={handleCheckboxChange}>
-                Marketing部門
-              </Checkbox>
-              <Checkbox value="Event部門" onChange={handleCheckboxChange}>
-                Event部門
-              </Checkbox>
-            </Stack>
-            <FormErrorMessage>{errors.department}</FormErrorMessage>
-          </FormControl>
-          <Buttoncenter>
-            <div>
-              <Button
-                background="#b3afaf"
-                color="#ffffff"
-                width="180px"
-                type="submit"
-                margin="50px"
-                fontWeight="bold"
-              >
-                完了
+      <Title>メンバーを登録する</Title>
+      <form onSubmit={handleSubmit}>
+        <FormControl isInvalid={!!errors.studentNumber} mb={4}>
+          <FormLabel>学籍番号</FormLabel>
+          <Input
+            value={studentNumber}
+            onChange={(e) => {
+              setStudentNumber(e.target.value);
+              validate("studentNumber", e.target.value);
+            }}
+            background="#dbdbdb"
+          />
+          <FormErrorMessage>{errors.studentNumber}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors.name} mb={4}>
+          <FormLabel>氏名</FormLabel>
+          <Input
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              validate("name", e.target.value);
+            }}
+            background="#dbdbdb"
+          />
+          <FormErrorMessage>{errors.name}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors.email} mb={4}>
+          <FormLabel>全学メールアドレス</FormLabel>
+          <Input
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              validate("email", e.target.value);
+            }}
+            background="#dbdbdb"
+          />
+          <FormErrorMessage>{errors.email}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors.grade} mb={4}>
+          <FormLabel>学年</FormLabel>
+          <Select
+            value={grade}
+            onChange={(e) => {
+              setGrade(e.target.value);
+              validate("grade", e.target.value);
+            }}
+            background="#dbdbdb"
+          >
+            <option value="">選択してください</option>
+            <option value="1">1年</option>
+            <option value="2">2年</option>
+            <option value="3">3年</option>
+            <option value="4">4年</option>
+          </Select>
+          <FormErrorMessage>{errors.grade}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors.department} mb={4}>
+          <FormLabel>所属部門</FormLabel>
+          <Stack spacing={2}>
+            <Checkbox value="Technology" onChange={handleCheckboxChange}>
+              Technology部門
+            </Checkbox>
+            <Checkbox value="Marketing" onChange={handleCheckboxChange}>
+              Marketing部門
+            </Checkbox>
+            <Checkbox value="Event" onChange={handleCheckboxChange}>
+              Event部門
+            </Checkbox>
+          </Stack>
+          <FormErrorMessage>{errors.department}</FormErrorMessage>
+        </FormControl>
+
+        <Buttoncenter>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            isDisabled={isButtonDisabled}
+          >
+            完了
+          </Button>
+        </Buttoncenter>
+      </form>
+
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsAlertOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>確認</AlertDialogHeader>
+            <AlertDialogBody>
+              {`学籍番号: ${studentNumber}\n氏名: ${name}\n全学メールアドレス: ${email}\n学年: ${grade}\n所属部門: ${departments.join(
+                ", "
+              )}`}
+              <br />
+              この内容で本当に送信して良いですか？
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
+                キャンセル
               </Button>
-            </div>
-          </Buttoncenter>
-        </form>
-        <AlertDialog
-          isOpen={isAlertOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={() => setIsAlertOpen(false)}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                確認
-              </AlertDialogHeader>
-              <AlertDialogBody>
-                {`学籍番号: ${studentNumber}\n氏名: ${name}\n全学メールアドレス: ${email}\n学年: ${grade}\n所属部門: ${departments.join(
-                  ", "
-                )}`}
-                この内容で本当に送信して良いですか？
-              </AlertDialogBody>
-              <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
-                  キャンセル
-                </Button>
-                <Button colorScheme="blue" onClick={handleConfirm} ml={3}>
-                  送信
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-      </div>
+              <Button colorScheme="blue" onClick={handleConfirm} ml={3}>
+                送信
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Wrapper>
   );
 }
