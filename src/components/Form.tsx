@@ -145,22 +145,32 @@ function Form() {
   const handleConfirm = async () => {
     setIsAlertOpen(false);
     const formData = {
-      name,
+      name: name,
       studentId: studentNumber,
-      email,
+      email: email,
       year: parseInt(grade),
       teamTechnology: departments.includes("Technology"),
       teamMarketing: departments.includes("Marketing"),
       teamEvent: departments.includes("Event"),
     };
+    console.log(formData);
 
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          studentId: "1111",
+          name: "テスト太郎",
+          email: "aaa",
+          year: 2,
+          teamEvent: true,
+          teamMarketing: true,
+          teamTechnology: false,
+        }),
       });
 
       if (!response.ok) {
@@ -169,7 +179,7 @@ function Form() {
       }
 
       const result = await response.json();
-      console.log("メンバーが正常に登録されました。ID:", result.id);
+      console.log("メンバーが正常に登録されました。ID:", result);
       // フォームをリセットする処理を追加
       setStudentNumber("");
       setName("");
@@ -177,10 +187,24 @@ function Form() {
       setGrade("");
       setDepartments([]);
       // 成功メッセージを表示する処理を追加
+      toast({
+        title: "登録完了",
+        description: "メンバーが正常に登録されました。",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("エラー:", error.message);
         // エラーメッセージを表示する処理を追加
+        toast({
+          title: "エラー",
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       } else {
         console.error("不明なエラーが発生しました:", error);
       }
@@ -281,6 +305,7 @@ function Form() {
             type="submit"
             colorScheme="blue"
             isDisabled={isButtonDisabled}
+            onClick={() => setIsAlertOpen(true)}
           >
             完了
           </Button>
