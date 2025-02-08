@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://gdsc-chuo-membership-backend.vercel.app";
+export const API_BASE_URL = "https://gdgs-members-service.vercel.app";

@@ -145,17 +145,17 @@ function Form() {
   const handleConfirm = async () => {
     setIsAlertOpen(false);
     const formData = {
-      student_id: studentNumber,
       name,
+      studentId: studentNumber,
       email,
       year: parseInt(grade),
-      team_technology: departments.includes("Technology"),
-      team_marketing: departments.includes("Marketing"),
-      team_event: departments.includes("Event"),
+      teamTechnology: departments.includes("Technology"),
+      teamMarketing: departments.includes("Marketing"),
+      teamEvent: departments.includes("Event"),
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/members`, {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
