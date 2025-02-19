@@ -161,15 +161,7 @@ function Form() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          studentId: '1111',
-          name: 'テスト太郎',
-          email: 'aaa',
-          year: 2,
-          teamEvent: true,
-          teamMarketing: true,
-          teamTechnology: false,
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
