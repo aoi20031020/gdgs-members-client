@@ -158,14 +158,13 @@ function Form() {
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          studentId: "1111",
-          name: "テスト太郎",
-          email: "aaa",
+          studentId: '1111',
+          name: 'テスト太郎',
+          email: 'aaa',
           year: 2,
           teamEvent: true,
           teamMarketing: true,
