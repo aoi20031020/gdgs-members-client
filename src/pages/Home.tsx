@@ -117,7 +117,7 @@ function Home() {
         {/* 左側：タイトルと背景グレー */}
         <LeftSide>
           <Title>
-            GDSC
+            GDGsChuo
             <br />
             membership
           </Title>

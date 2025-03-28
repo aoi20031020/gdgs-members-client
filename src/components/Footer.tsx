@@ -14,7 +14,7 @@ const StyledFooter = styled.footer`
 function Footer() {
   return (
     <StyledFooter>
-      <p>© 2024 GDSCchuo</p>
+      <p>© 2025 GDGsChuo</p>
     </StyledFooter>
   );
 }
