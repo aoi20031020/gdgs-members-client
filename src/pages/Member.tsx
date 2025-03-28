@@ -68,6 +68,10 @@ const StyledBoxTextCenter = styled.div`
   text-align: center;
 `;
 
+const StyledBoxTextLeft = styled.div`
+  text-align: left;
+`;
+
 function Members() {
   const { getMembers, getMemberById, deleteMember } = useMembers();
   const [members, setMembers] = useState<Member[]>([]);
@@ -177,9 +181,15 @@ function Members() {
             <Thead>
               <Tr>
                 <StyledTableHeader>No</StyledTableHeader>
-                <StyledTableHeader>学籍番号</StyledTableHeader>
-                <StyledTableHeader>氏名</StyledTableHeader>
-                <StyledTableHeader>全学メール</StyledTableHeader>
+                <StyledTableHeader>
+                  <StyledBoxTextLeft>学籍番号</StyledBoxTextLeft>
+                </StyledTableHeader>
+                <StyledTableHeader>
+                  <StyledBoxTextLeft>氏名</StyledBoxTextLeft>
+                </StyledTableHeader>
+                <StyledTableHeader>
+                  <StyledBoxTextLeft>全学メール</StyledBoxTextLeft>
+                </StyledTableHeader>
                 <StyledTableHeader>学年</StyledTableHeader>
                 <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
                 <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
