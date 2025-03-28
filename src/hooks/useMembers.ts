@@ -2,59 +2,40 @@
 import { useCallback } from "react";
 import { useAuth } from "./useAuth";
 import { API_BASE_URL } from "../config";
-
-export interface Member {
-  id: string;
-  student_id: string;
-  name: string;
-  email: string;
-  year: number;
-  team_technology: boolean;
-  team_marketing: boolean;
-  team_event: boolean;
-}
-
-export interface NewMember {
-  student_id: string;
-  name: string;
-  email: string;
-  year: number;
-  team_technology: boolean;
-  team_marketing: boolean;
-  team_event: boolean;
-}
+import { Member, NewMember, ApiMember } from "../tepes/members";
 
 export function useMembers() {
   const { checkSessionToken } = useAuth();
 
   const getMembers = useCallback(async () => {
-    const token = checkSessionToken();
-    console.log("Session token in useMembers:", token);
-    if (!token) {
-      throw new Error("No session token available. Please log in.");
-    }
-
     try {
-      const response = await fetch(`${API_BASE_URL}/members`, {
-        headers: {
-          Authorization: `Session ${token}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/users`);
       if (!response.ok) {
         throw new Error(`Failed to fetch members: ${response.statusText}`);
       }
-      const data = await response.json();
-      return data.members || []; // サーバーからの応答に 'members' プロパティがあると仮定
+      const data: ApiMember[] = await response.json();
+      console.log(data);
+      const members: Member[] = data.map((element) => ({
+        id: element.id,
+        student_id: element.studentId,
+        name: element.name,
+        email: element.email,
+        year: element.year,
+        team_technology: element.teamTechnology,
+        team_marketing: element.teamMarketing,
+        team_event: element.teamEvent,
+      }));
+      return members || []; // 'members' プロパティがあることを想定
     } catch (error) {
       console.error("Error fetching members:", error);
       throw error;
     }
-  }, [checkSessionToken]);
+  }, []);
 
   const getMemberById = useCallback(
     async (id: string): Promise<Member> => {
       try {
-        const response = await fetch(`${API_BASE_URL}/members/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${id}`, {
           headers: {
             Authorization: `Bearer ${checkSessionToken}`,
           },

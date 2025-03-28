@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { API_BASE_URL } from "../config";
 
+// Title and Wrapper styles
 const Title = styled.h1`
   text-align: center;
   font-size: 2em;
@@ -28,8 +29,16 @@ const Title = styled.h1`
 
 const Wrapper = styled.div`
   max-width: 600px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 16px; /* Add some padding for small screens */
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 0 8px; /* Reduce padding for smaller screens */
+  }
 `;
 
 const Buttoncenter = styled.div`
@@ -137,7 +146,20 @@ function Form() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (validate("all", null)) {
+
+    const isStudentNumberValid = validate("studentNumber", studentNumber);
+    const isNameValid = validate("name", name);
+    const isEmailValid = validate("email", email);
+    const isGradeValid = validate("grade", grade);
+    const isDepartmentValid = validate("department", null);
+
+    if (
+      isStudentNumberValid &&
+      isNameValid &&
+      isEmailValid &&
+      isGradeValid &&
+      isDepartmentValid
+    ) {
       setIsAlertOpen(true);
     }
   };
@@ -153,7 +175,6 @@ function Form() {
       teamMarketing: departments.includes("Marketing"),
       teamEvent: departments.includes("Event"),
     };
-    console.log(formData);
 
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
@@ -169,15 +190,13 @@ function Form() {
         throw new Error(errorData.error || "メンバー登録に失敗しました");
       }
 
-      const result = await response.json();
-      console.log("メンバーが正常に登録されました。ID:", result);
-      // フォームをリセットする処理を追加
       setStudentNumber("");
       setName("");
       setEmail("");
       setGrade("");
       setDepartments([]);
-      // 成功メッセージを表示する処理を追加
+      setErrors({});
+
       toast({
         title: "登録完了",
         description: "メンバーが正常に登録されました。",
@@ -188,7 +207,6 @@ function Form() {
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("エラー:", error.message);
-        // エラーメッセージを表示する処理を追加
         toast({
           title: "エラー",
           description: error.message,
@@ -196,8 +214,6 @@ function Form() {
           duration: 5000,
           isClosable: true,
         });
-      } else {
-        console.error("不明なエラーが発生しました:", error);
       }
     }
   };
@@ -275,17 +291,17 @@ function Form() {
           <FormErrorMessage>{errors.grade}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.department} mb={4}>
-          <FormLabel>所属部門</FormLabel>
-          <Stack spacing={2}>
+        <FormControl isInvalid={!!errors.department}>
+          <FormLabel>所属セクション</FormLabel>
+          <Stack spacing={2} direction="row" gap={4}>
             <Checkbox value="Technology" onChange={handleCheckboxChange}>
-              Technology部門
+              Technology
             </Checkbox>
             <Checkbox value="Marketing" onChange={handleCheckboxChange}>
-              Marketing部門
+              Marketing
             </Checkbox>
             <Checkbox value="Event" onChange={handleCheckboxChange}>
-              Event部門
+              Event
             </Checkbox>
           </Stack>
           <FormErrorMessage>{errors.department}</FormErrorMessage>
@@ -295,8 +311,9 @@ function Form() {
           <Button
             type="submit"
             colorScheme="blue"
+            size="lg"
             isDisabled={isButtonDisabled}
-            onClick={() => setIsAlertOpen(true)}
+            marginY={4}
           >
             完了
           </Button>
@@ -316,14 +333,14 @@ function Form() {
                 ", "
               )}`}
               <br />
-              この内容で本当に送信して良いですか？
+              この内容で登録してもよろしいですか？
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
                 キャンセル
               </Button>
               <Button colorScheme="blue" onClick={handleConfirm} ml={3}>
-                送信
+                確認
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

@@ -18,9 +18,10 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import styled from "styled-components";
-import { useMembers, Member } from "../hooks/useMembers";
+import { useMembers } from "../hooks/useMembers";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { Member } from "../tepes/members";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -34,12 +35,13 @@ const StyledTable = styled.div`
 `;
 
 const StyledTableCell = styled.td`
-  text-align: center;
+  text-align: left;
   padding: 20px;
   border-bottom: 1px solid #ddd;
 `;
 
 const StyledTableTeam = styled(StyledTableCell)`
+  text-align: center;
   width: 120px;
 `;
 
@@ -53,6 +55,17 @@ const StyledTableHeader = styled.th`
 
 const StyledTableHeaderTeam = styled(StyledTableHeader)`
   width: 120px;
+`;
+
+const StyledButtonBox = styled.div`
+  display: flex;
+  justify-content: center; /* 中央揃え */
+  align-items: center;
+  gap: 12px; /* ボタン間の間隔 */
+`;
+
+const StyledBoxTextCenter = styled.div`
+  text-align: center;
 `;
 
 function Members() {
@@ -86,8 +99,9 @@ function Members() {
   const fetchMembersData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await getMembers();
-      setMembers(data || []); // データがnullの場合は空配列を設定
+      const data: Member[] = await getMembers();
+      console.log(data);
+      await setMembers(data || null); // データがnullの場合は空配列を設定
       setError(null);
     } catch (error: unknown) {
       handleError(error, "Error fetching members:");
@@ -105,20 +119,21 @@ function Members() {
       "Session token:",
       token
     );
-    if (!token) {
-      console.log("No token, redirecting to login");
-      navigate("/login");
-      return;
-    }
+    // if (!token) {
+    //   console.log("No token, redirecting to login");
+    //   navigate("/login");
+    //   return;
+    // }
 
     fetchMembersData();
   }, [checkSessionToken, isAuthenticated, navigate, fetchMembersData]);
 
-  const handleRowClick = async (memberId: string) => {
+  const handleRowClick = async (member: Member) => {
+    console.log(member);
     try {
       setIsLoading(true);
-      const memberData = await getMemberById(memberId);
-      setSelectedMember(memberData);
+      // const memberData = await getMemberById(member);
+      setSelectedMember(member);
       onOpen();
     } catch (error) {
       handleError(error, "Error fetching member details:");
@@ -176,11 +191,15 @@ function Members() {
               {members.length > 0 ? (
                 members.map((member, index) => (
                   <Tr key={member.id}>
-                    <StyledTableCell>{index + 1}</StyledTableCell>
+                    <StyledTableCell>
+                      <StyledBoxTextCenter>{member.id}</StyledBoxTextCenter>
+                    </StyledTableCell>
                     <StyledTableCell>{member.student_id}</StyledTableCell>
                     <StyledTableCell>{member.name}</StyledTableCell>
                     <StyledTableCell>{member.email}</StyledTableCell>
-                    <StyledTableCell>{member.year}</StyledTableCell>
+                    <StyledTableCell>
+                      <StyledBoxTextCenter>{member.year}</StyledBoxTextCenter>
+                    </StyledTableCell>
                     <StyledTableTeam>
                       {member.team_technology ? "○" : "×"}
                     </StyledTableTeam>
@@ -191,12 +210,17 @@ function Members() {
                       {member.team_event ? "○" : "×"}
                     </StyledTableTeam>
                     <StyledTableCell>
-                      <Button onClick={() => handleRowClick(member.id)}>
-                        詳細
-                      </Button>
-                      <Button onClick={() => handleDeleteMember(member.id)}>
-                        削除
-                      </Button>
+                      <StyledButtonBox>
+                        <Button onClick={() => handleRowClick(member)}>
+                          詳細
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => handleDeleteMember(member.id)}
+                        >
+                          削除
+                        </Button>
+                      </StyledButtonBox>
                     </StyledTableCell>
                   </Tr>
                 ))
@@ -232,11 +256,7 @@ function Members() {
               </>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              閉じる
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </StyledMembers>

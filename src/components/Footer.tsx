@@ -4,7 +4,11 @@ const StyledFooter = styled.footer`
   text-align: center;
   padding: 10px;
   width: 100%;
-  text-align: right;
+  background-color: #696969; // 背景色を追加して視認性を高める
+
+  @media (max-width: 768px) {
+    padding: 20px; // モバイルでパディングを調整
+  }
 `;
 
 function Footer() {
