@@ -184,13 +184,13 @@ function Members() {
                 <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
                 <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
                 <StyledTableHeaderTeam>Event</StyledTableHeaderTeam>
-                <StyledTableHeader></StyledTableHeader>
+                {/* <StyledTableHeader></StyledTableHeader> */}
               </Tr>
             </Thead>
             <Tbody>
               {members.length > 0 ? (
                 members.map((member, index) => (
-                  <Tr key={member.id}>
+                  <Tr key={member.id} onClick={() => handleRowClick(member)}>
                     <StyledTableCell>
                       <StyledBoxTextCenter>{member.id}</StyledBoxTextCenter>
                     </StyledTableCell>
@@ -209,19 +209,19 @@ function Members() {
                     <StyledTableTeam>
                       {member.team_event ? "○" : "×"}
                     </StyledTableTeam>
-                    <StyledTableCell>
+                    {/* <StyledTableCell>
                       <StyledButtonBox>
                         <Button onClick={() => handleRowClick(member)}>
                           詳細
                         </Button>
-                        {/* <Button
+                        <Button
                           colorScheme="red"
                           onClick={() => handleDeleteMember(member.id)}
                         >
                           削除
-                        </Button> */}
+                        </Button>
                       </StyledButtonBox>
-                    </StyledTableCell>
+                    </StyledTableCell> */}
                   </Tr>
                 ))
               ) : (
