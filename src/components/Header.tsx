@@ -97,7 +97,7 @@ function Header() {
             <img src={`${process.env.PUBLIC_URL}/images/logo.png`} />
           </Link>
         </Picture>
-        <TitleStyle>GDGsChuoメンバー管理サイト</TitleStyle>
+        <TitleStyle>GDGsChuoメンバーサイト</TitleStyle>
       </TitleBox>
       <ButtonBox>
         <Link to="/">

@@ -231,7 +231,7 @@ function Form() {
 
   return (
     <Wrapper>
-      <Title>メンバーを登録する</Title>
+      <Title>メンバー登録</Title>
       <form onSubmit={handleSubmit}>
         <FormControl isInvalid={!!errors.studentNumber} mb={4}>
           <FormLabel>学籍番号</FormLabel>
@@ -327,20 +327,25 @@ function Form() {
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader>確認</AlertDialogHeader>
+            <AlertDialogHeader>登録内容</AlertDialogHeader>
             <AlertDialogBody>
-              {`学籍番号: ${studentNumber}\n氏名: ${name}\n全学メールアドレス: ${email}\n学年: ${grade}\n所属部門: ${departments.join(
-                ", "
-              )}`}
+              {`学籍番号: ${studentNumber}`}
               <br />
-              この内容で登録してもよろしいですか？
+              {`氏名: ${name}`}
+              <br />
+              {`全学メール: ${email}`}
+              <br />
+              {`学年: ${grade}`}
+              <br />
+              {`所属セクション: ${departments.join(", ")}`}
+              <br />
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
                 キャンセル
               </Button>
               <Button colorScheme="blue" onClick={handleConfirm} ml={3}>
-                確認
+                登録
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
