@@ -184,7 +184,7 @@ function Members() {
                 <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
                 <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
                 <StyledTableHeaderTeam>Event</StyledTableHeaderTeam>
-                <StyledTableHeader>操作</StyledTableHeader>
+                <StyledTableHeader></StyledTableHeader>
               </Tr>
             </Thead>
             <Tbody>
