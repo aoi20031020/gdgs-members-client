@@ -214,12 +214,12 @@ function Members() {
                         <Button onClick={() => handleRowClick(member)}>
                           詳細
                         </Button>
-                        <Button
+                        {/* <Button
                           colorScheme="red"
                           onClick={() => handleDeleteMember(member.id)}
                         >
                           削除
-                        </Button>
+                        </Button> */}
                       </StyledButtonBox>
                     </StyledTableCell>
                   </Tr>

@@ -74,7 +74,7 @@ export function useMembers() {
   const deleteMember = useCallback(
     async (id: string): Promise<void> => {
       try {
-        const response = await fetch(`${API_BASE_URL}/members/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${checkSessionToken}`,
