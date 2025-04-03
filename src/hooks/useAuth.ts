@@ -19,7 +19,7 @@ export const useAuth = () => {
   
       if (!response.ok) {
         console.log("Login failed:", response.statusText);
-        throw new Error("ログインに失敗しました");
+        throw new Error("コアメンバーのみログインできます");
       }
   
       const data = await response.json();
@@ -31,7 +31,7 @@ export const useAuth = () => {
       setTimeout(() => navigate("/members"), 100);
     } catch (error) {
       console.error("Login error:", error);
-      alert("ログインに失敗しました");
+      alert("コアメンバーのみログインできます");
     }
   }, [navigate]);
   
