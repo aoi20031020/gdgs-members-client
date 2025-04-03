@@ -79,15 +79,17 @@ const TitleBox = styled.div`
 function Header() {
   const { isAuthenticated, login } = useAuthContext();
   const navigate = useNavigate();
-  const handleMembersClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate("/members");
-    // if (isAuthenticated) {
-    //   navigate("/members");
-    // } else {
-    //   login();
-    // }
-  };
+    const handleMembersClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      const isAuthenticated = !!sessionStorage.getItem("authToken");
+      if (isAuthenticated) {
+        setTimeout(() => {
+          navigate("/members");
+        }, 100); // Small delay for smoother navigation
+      } else {
+        navigate("/login");
+      }
+    };
 
   return (
     <AppHeader>

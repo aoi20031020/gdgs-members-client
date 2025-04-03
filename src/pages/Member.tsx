@@ -19,9 +19,10 @@ import {
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { useMembers } from "../hooks/useMembers";
-import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Member } from "../tepes/members";
+
+import { useAuth } from "../hooks/useAuth";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -73,7 +74,9 @@ const StyledBoxTextLeft = styled.div`
 `;
 
 function Members() {
-  const { getMembers, getMemberById, deleteMember } = useMembers();
+  // const { getMembers, getMemberById, deleteMember } = useMembers();
+  const  {getMembers}  = useMembers();
+
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -104,7 +107,6 @@ function Members() {
     try {
       setIsLoading(true);
       const data: Member[] = await getMembers();
-      console.log(data);
       await setMembers(data || null); // データがnullの場合は空配列を設定
       setError(null);
     } catch (error: unknown) {
@@ -116,24 +118,10 @@ function Members() {
   }, [getMembers, handleError]);
 
   useEffect(() => {
-    const token = checkSessionToken();
-    console.log(
-      "Authentication state:",
-      isAuthenticated,
-      "Session token:",
-      token
-    );
-    // if (!token) {
-    //   console.log("No token, redirecting to login");
-    //   navigate("/login");
-    //   return;
-    // }
-
     fetchMembersData();
   }, [checkSessionToken, isAuthenticated, navigate, fetchMembersData]);
 
   const handleRowClick = async (member: Member) => {
-    console.log(member);
     try {
       setIsLoading(true);
       // const memberData = await getMemberById(member);
@@ -146,14 +134,14 @@ function Members() {
     }
   };
 
-  const handleDeleteMember = async (id: string) => {
-    try {
-      await deleteMember(id);
-      await fetchMembersData(); // Refresh the member list
-    } catch (error) {
-      handleError(error, "Error deleting member:");
-    }
-  };
+  // const handleDeleteMember = async (id: string) => {
+  //   try {
+  //     await deleteMember(id);
+  //     await fetchMembersData(); // Refresh the member list
+  //   } catch (error) {
+  //     handleError(error, "Error deleting member:");
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -180,7 +168,6 @@ function Members() {
             <TableCaption>メンバー一覧</TableCaption>
             <Thead>
               <Tr>
-                <StyledTableHeader>No</StyledTableHeader>
                 <StyledTableHeader>
                   <StyledBoxTextLeft>学籍番号</StyledBoxTextLeft>
                 </StyledTableHeader>
@@ -201,9 +188,6 @@ function Members() {
               {members.length > 0 ? (
                 members.map((member, index) => (
                   <Tr key={member.id} onClick={() => handleRowClick(member)}>
-                    <StyledTableCell>
-                      <StyledBoxTextCenter>{member.id}</StyledBoxTextCenter>
-                    </StyledTableCell>
                     <StyledTableCell>{member.student_id}</StyledTableCell>
                     <StyledTableCell>{member.name}</StyledTableCell>
                     <StyledTableCell>{member.email}</StyledTableCell>
