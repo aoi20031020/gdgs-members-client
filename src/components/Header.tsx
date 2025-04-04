@@ -9,12 +9,14 @@ const AppHeader = styled.header`
   background-color: #696969;
   align-items: center;
   width: 100%;
+  height: 96px;
   padding: 10px 20px;
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
     padding: 10px;
+    height: auto; // モバイルで高さを自動調整
   }
 `;
 
@@ -22,7 +24,14 @@ const StyledButton = styled.button`
   color: white;
   padding: 10px 20px;
   font-size: 16px;
-
+  cursor: pointer;
+  &:hover {
+    // ホバー時の背景色
+    background-color: #c0c0c0;
+    color: black;
+    border-radius: 6px; // ホバー時の角丸
+    transition: 0.4s; // ホバー時のトランジション
+  }
   @media (max-width: 768px) {
     font-size: 14px; // モバイルでフォントサイズを小さく
     padding: 8px 16px; // ボタンのパディングを小さく
@@ -57,6 +66,7 @@ const Picture = styled.div`
 
 const ButtonBox = styled.div`
   display: flex;
+  gap: 10px; // ボタン間のスペースを調整
 
   @media (max-width: 768px) {
     width: 100%;
@@ -79,17 +89,17 @@ const TitleBox = styled.div`
 function Header() {
   const { isAuthenticated, login } = useAuthContext();
   const navigate = useNavigate();
-    const handleMembersClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      const isAuthenticated = !!sessionStorage.getItem("authToken");
-      if (isAuthenticated) {
-        setTimeout(() => {
-          navigate("/members");
-        }, 100); // Small delay for smoother navigation
-      } else {
-        navigate("/login");
-      }
-    };
+  const handleMembersClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const isAuthenticated = !!sessionStorage.getItem("authToken");
+    if (isAuthenticated) {
+      setTimeout(() => {
+        navigate("/members");
+      }, 100); // Small delay for smoother navigation
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <AppHeader>

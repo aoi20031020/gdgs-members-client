@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 // 左右分割デザイン
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ wrapperHeight: string }>`
   display: flex;
-  height: 100vh;
   flex-direction: row;
+  height: ${({ wrapperHeight }) => wrapperHeight}; // 動的に高さを設定
 
   @media (max-width: 1000px) {
     flex-direction: column; // モバイルでは縦並び
@@ -92,6 +92,14 @@ const Astyle = styled.div`
   align-items: center;
   margin-top: 10px;
   max-width: 200px; // ボタンの最大幅を設定
+  cursor: pointer;
+
+  :hover {
+    background-color: #696969; // ホバー時の背景色
+    border-radius: 10px; // ホバー時の角丸
+    transition: 0.3s; // ホバー時のトランジション
+    transform: scale(1.05); // ホバー時の拡大効果
+  }
 
   @media (max-width: 790px) {
     max-width: 100%; // モバイルでも最大幅を調整
@@ -101,15 +109,36 @@ const Astyle = styled.div`
 const HomeBox = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
 `;
 
 function Home() {
+  const [wrapperHeight, setWrapperHeight] = useState("100vh"); // 初期値として100vhを設定
   const navigate = useNavigate();
+
+  // ヘッダーとフッターの高さを計算
+  useEffect(() => {
+    const calculateHeight = () => {
+      const headerHeight = document.querySelector("header")?.clientHeight || 0;
+      const footerHeight = document.querySelector("footer")?.clientHeight || 0;
+
+      const availableHeight = `calc(100vh - ${headerHeight + footerHeight}px)`;
+      setWrapperHeight(availableHeight);
+    };
+
+    // ページのロード時とウィンドウリサイズ時に高さを再計算
+    calculateHeight();
+    window.addEventListener("resize", calculateHeight);
+
+    return () => {
+      window.removeEventListener("resize", calculateHeight);
+    };
+  }, []); // マウント時にのみ実行
+
   const handleMembersClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const isAuthenticated = !!sessionStorage.getItem("authToken");
-  
+
     if (isAuthenticated) {
       setTimeout(() => {
         navigate("/members");
@@ -118,11 +147,10 @@ function Home() {
       navigate("/login");
     }
   };
-  
 
   return (
     <HomeBox>
-      <Wrapper>
+      <Wrapper wrapperHeight={wrapperHeight}>
         {/* 左側：タイトルと背景グレー */}
         <LeftSide>
           <Title>
@@ -143,20 +171,21 @@ function Home() {
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </IconStyle>
-              <ButtonText>メンバー登録</ButtonText>
             </Astyle>
+            <ButtonText>メンバー登録</ButtonText>
           </Link>
-
-          <Astyle onClick={handleMembersClick}>
-            <IconStyle>
-              <img
-                src={`${process.env.PUBLIC_URL}/images/three.png`}
-                alt="three"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </IconStyle>
+          <Link to="members">
+            <Astyle onClick={handleMembersClick}>
+              <IconStyle>
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/three.png`}
+                  alt="three"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </IconStyle>
+            </Astyle>
             <ButtonText>メンバー一覧</ButtonText>
-          </Astyle>
+          </Link>
         </RightSide>
       </Wrapper>
     </HomeBox>
