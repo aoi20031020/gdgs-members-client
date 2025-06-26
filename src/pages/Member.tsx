@@ -230,7 +230,12 @@ function Members() {
       <StyledMembers>
         <StyledTable>
           <TableContainer maxH={tableHeight} overflowY="auto">
-            <Table colorScheme="gray" variant="simple" size="md">
+            <Table
+              colorScheme="gray"
+              variant="simple"
+              size="md"
+              style={{ tableLayout: "fixed", width: "100%" }}
+            >
               <Thead position="sticky" top={0} zIndex="docked" bg="#c0c0c0">
                 <Tr>
                   <StyledTableHeader>
