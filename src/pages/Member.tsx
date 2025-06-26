@@ -4,25 +4,18 @@ import {
   Thead,
   Tbody,
   Tr,
-  TableCaption,
   TableContainer,
   Button,
   useDisclosure,
   Spinner,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { useMembers } from "../hooks/useMembers";
 import { useNavigate } from "react-router-dom";
-import { Member } from "../tepes/members";
+import { Member } from "../tepe/members";
 
 import { useAuth } from "../hooks/useAuth";
+import MemberDrawer from "../components/MemberDrawer";
 
 const StyledMembers = styled.div`
   width: 100%;
@@ -253,6 +246,9 @@ function Members() {
                   <StyledTableHeaderTeam>Technology</StyledTableHeaderTeam>
                   <StyledTableHeaderTeam>Marketing</StyledTableHeaderTeam>
                   <StyledTableHeaderTeam>Event</StyledTableHeaderTeam>
+                  <StyledTableHeader>
+                    <StyledBoxTextLeft>Role</StyledBoxTextLeft>
+                  </StyledTableHeader>
                   {/* <StyledTableHeader></StyledTableHeader> */}
                 </Tr>
               </Thead>
@@ -275,6 +271,7 @@ function Members() {
                       <StyledTableTeam>
                         {member.team_event ? "○" : "×"}
                       </StyledTableTeam>
+                      <StyledTableCell>{member.role}</StyledTableCell>
                       {/* <StyledTableCell>
                       <StyledButtonBox>
                         <Button onClick={() => handleRowClick(member)}>
@@ -301,32 +298,13 @@ function Members() {
             </Table>
           </TableContainer>
         </StyledTable>
-
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>メンバー詳細</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {selectedMember && (
-                <>
-                  <p>学籍番号: {selectedMember.student_id}</p>
-                  <p>氏名: {selectedMember.name}</p>
-                  <p>メール: {selectedMember.email}</p>
-                  <p>学年: {selectedMember.year}</p>
-                  <p>
-                    Technology: {selectedMember.team_technology ? "Yes" : "No"}
-                  </p>
-                  <p>
-                    Marketing: {selectedMember.team_marketing ? "Yes" : "No"}
-                  </p>
-                  <p>Event: {selectedMember.team_event ? "Yes" : "No"}</p>
-                </>
-              )}
-            </ModalBody>
-            <ModalFooter></ModalFooter>
-          </ModalContent>
-        </Modal>
+        <MemberDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          selectedMember={selectedMember}
+          setSelectedMember={(member) => setSelectedMember(member)}
+          onUpdate={fetchMembersData} // 🔄 ここで再取得
+        />
       </StyledMembers>
       <PaginationButtonContainer
         className="pagination"

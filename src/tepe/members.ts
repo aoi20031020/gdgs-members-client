@@ -7,6 +7,7 @@ export interface Member {
   team_technology: boolean;
   team_marketing: boolean;
   team_event: boolean;
+  role: string;
 }
 
 export interface NewMember {

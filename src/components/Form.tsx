@@ -18,6 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { API_BASE_URL } from "../config";
+import { useMembers } from "../hooks/useMembers";
 
 // Title and Wrapper styles
 const Title = styled.h1`
@@ -64,6 +65,7 @@ function Form() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const cancelRef = React.useRef(null);
   const toast = useToast();
+  const { addMember } = useMembers();
 
   const validate = (field: string, value: string | null) => {
     let isValid = true;
@@ -177,42 +179,31 @@ function Form() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "メンバー登録に失敗しました");
-      }
-
+      await addMember(formData); // ← useMembers から呼び出し
+      // リセットとトースト処理
       setStudentNumber("");
       setName("");
       setEmail("");
       setGrade("");
       setDepartments([]);
       setErrors({});
-
       toast({
         title: "登録完了",
         description: "メンバーが正常に登録されました。",
         status: "success",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
+        position: "bottom-left",
       });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error("エラー:", error.message);
         toast({
           title: "エラー",
           description: error.message,
           status: "error",
-          duration: 5000,
+          duration: 3000,
           isClosable: true,
+          position: "bottom-left",
         });
       }
     }
