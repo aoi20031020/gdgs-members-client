@@ -234,7 +234,11 @@ function Members() {
               colorScheme="gray"
               variant="simple"
               size="md"
-              style={{ tableLayout: "fixed", width: "100%" }}
+              style={{
+                tableLayout: "fixed",
+                width: "100%",
+                minWidth: "1350px",
+              }}
             >
               <Thead position="sticky" top={0} zIndex="docked" bg="#c0c0c0">
                 <Tr>
